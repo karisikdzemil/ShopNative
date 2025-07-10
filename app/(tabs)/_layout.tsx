@@ -25,13 +25,6 @@ export default function RootLayout() {
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
-        // tabBarItemStyle: {
-        //   width: "100%",
-        //   height: "100%",
-        //   display: "flex",
-        //   justifyContent: "center",
-        //   alignItems: "center",
-        // },
         tabBarStyle: {
           backgroundColor: "#1C1C1E",
           paddingTop: "20",
@@ -65,7 +58,7 @@ export default function RootLayout() {
           title: "Cart",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon="search" title="Search" />
+            <TabIcon focused={focused} icon="shopping-cart" title="Cart" />
           ),
         }}
       />
@@ -75,7 +68,7 @@ export default function RootLayout() {
           title: "Profile",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon="home" title="Home" />
+            <TabIcon focused={focused} icon="user" title="Profile" />
           ),
         }}
       />
