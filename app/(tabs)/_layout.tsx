@@ -5,19 +5,12 @@ import { Text, View } from "react-native";
 const TabIcon = ({ focused, icon, title }: any) => {
   return (
     <View className="w-[50px] h-[50px] flex items-center gap-1">
-      <Feather name={icon} size={24} color={focused ? "orange" : "gray"} />
-      <Text className={focused ? "text-orange-400" : "text-gray-400"}>
+      <Feather name={icon} size={24} color={focused ? "#FF5C00" : "gray"} />
+      <Text className={focused ? "text-[#FF5C00]" : "text-gray-400"}>
         {title}
       </Text>
     </View>
   );
-
-  // return(
-  //   <View className="text-gray-500">
-  //       <Text>{icon}</Text>
-  //       <Text>{title}</Text>
-  //     </View>
-  // )
 };
 
 export default function RootLayout() {
