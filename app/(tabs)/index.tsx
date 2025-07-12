@@ -1,8 +1,8 @@
 import AutoScrollSlider from "@/components/AutoScrollSlider";
+import Item from "@/components/Item";
 import Feather from "@expo/vector-icons/Feather";
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
-
+import { FlatList, Text, View } from "react-native";
 
 export default function Index() {
   const [commerce, setCommerce] = useState<any[]>([]);
@@ -36,6 +36,32 @@ export default function Index() {
         </View>
       </View>
       <AutoScrollSlider />
+      <View className="p-5">
+        <FlatList
+          data={commerce}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <Item
+              imageUrl={item.image}
+              title={item.title}
+              category={item.category}
+              rating={item.rating}
+              price={item.price}
+            />
+          )}
+          numColumns={2}
+          columnWrapperStyle={{
+            justifyContent: "space-between",
+            paddingHorizontal: 16,
+            marginBottom: 20,
+          }}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingTop: 20,
+            paddingBottom: 40,
+          }}
+        />
+      </View>
     </View>
   );
 }
