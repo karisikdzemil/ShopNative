@@ -1,7 +1,7 @@
 import { Text, View } from "react-native"
-export default function Cart(){
+export default function Profile(){
     return(
-        <View>
+        <View >
             <Text>Profile Page</Text>
         </View>
     )
