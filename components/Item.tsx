@@ -3,7 +3,7 @@ import { Image, Text, View } from "react-native";
 
 export default function Item({imageUrl, title, category, rating, price}: any) {
   return (
-    <View className="w-[45%] h-[35vh] bg-[#1C1C1E] rounded-md">
+    <View className="w-[48%] h-[35vh] bg-[#1C1C1E] rounded-md">
       <Image
         className="rounded-xl"
         source={{ uri: imageUrl }}
