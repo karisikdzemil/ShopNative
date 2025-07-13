@@ -6,14 +6,22 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { Product } from "@/types";
 import Feather from "@expo/vector-icons/Feather";
 import { useEffect } from "react";
-import { FlatList, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Index() {
   const dispatch = useDispatch<AppDispatch>();
-  const { items: products, loading, error } = useSelector(
-    (state: RootState) => state.products
-  );
+  const {
+    items: products,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.products);
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -78,7 +86,9 @@ export default function Index() {
           )}
 
           {loading && (
-            <Text className="text-white text-center mt-5">Loading...</Text>
+            <View className="flex-1 justify-center align-center">
+              <ActivityIndicator size="large" color="#FF5C00" />
+            </View>
           )}
           {error && (
             <Text className="text-red-500 text-center mt-5">{error}</Text>
