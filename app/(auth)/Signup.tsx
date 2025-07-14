@@ -1,15 +1,18 @@
 import { auth, db } from "@/FirebaseConfig";
+import { setUser } from "@/redux/slices/userSlice";
 import Feather from "@expo/vector-icons/Feather";
 import { Link, useRouter } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useDispatch } from "react-redux";
 
 export default function Signup() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
 
   const router = useRouter();
 
@@ -23,15 +26,19 @@ export default function Signup() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Zapisivanje korisnika u Firestore
       await setDoc(doc(db, "users", user.uid), {
         fullName,
         email,
         createdAt: new Date(),
       });
+       dispatch(setUser({
+              uid: user.uid,
+              email: user.email,
+              fullName
+            }));
 
       console.log("User created:", user.email);
-      router.replace("/(tabs)"); // promeni ako imaš drugi home screen
+      router.replace("/(tabs)"); 
     } catch (error: any) {
       console.error("Signup error:", error);
       Alert.alert("Signup Failed", error.message);

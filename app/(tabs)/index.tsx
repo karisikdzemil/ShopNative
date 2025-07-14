@@ -22,6 +22,8 @@ export default function Index() {
     loading,
     error,
   } = useSelector((state: RootState) => state.products);
+  const user = useSelector((state: RootState) => state.user);
+  console.log(user);
 
   useEffect(() => {
     dispatch(fetchProducts());

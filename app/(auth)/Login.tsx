@@ -1,15 +1,17 @@
-// Login.tsx
 import { auth } from "@/FirebaseConfig";
+import { setUser } from "@/redux/slices/userSlice";
 import Feather from "@expo/vector-icons/Feather";
 import { Link, useRouter } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useDispatch } from "react-redux";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -20,7 +22,11 @@ export default function Login() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      console.log("Logged in:", user.email);
+      dispatch(setUser({
+        uid: user.uid,
+        email: user.email,
+        fullName: null
+      }));
       router.replace("/(tabs)"); 
     } catch (error: any) {
       console.error("Login failed:", error);
@@ -74,7 +80,7 @@ export default function Login() {
       </View>
 
       <View className="flex-row gap-2 justify-end mt-10 pr-7">
-        <Text className="text-white">Don't have an account?</Text>
+        <Text className="text-white">{"Don't have an account?"}</Text>
         <Link className="text-[#FF5C00]" href="/(auth)/Signup">SignUp</Link>
       </View>
 
