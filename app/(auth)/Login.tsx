@@ -1,8 +1,9 @@
-import { auth } from "@/FirebaseConfig";
+import { auth, db } from "@/FirebaseConfig";
 import { setUser } from "@/redux/slices/userSlice";
 import Feather from "@expo/vector-icons/Feather";
 import { Link, useRouter } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import { useState } from "react";
 import { ActivityIndicator, Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch } from "react-redux";
@@ -20,19 +21,28 @@ export default function Login() {
       return;
     }
 
-    try {
-      setLoading(true);
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      dispatch(setUser({
-        uid: user.uid,
-        email: user.email,
-        fullName: null
-      }));
-      setLoading(false);
-      router.replace("/(tabs)"); 
+   try {
+  setLoading(true);
+
+  // 1. Prijavi korisnika
+  const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+
+  // 2. Povuci podatke iz Firestore
+  const docSnap = await getDoc(doc(db, "users", user.uid));
+
+  if (!docSnap.exists()) {
+    throw new Error("User data not found in Firestore.");
+  }
+
+  // 3. Setuj usera u redux
+  dispatch(setUser({ uid: user.uid, ...docSnap.data() }));
+
+  setLoading(false);
+  router.replace("/(tabs)");
     } catch (error: any) {
       console.error("Login failed:", error);
+  setLoading(false);
       Alert.alert("Login Failed", error.message);
     }
   };

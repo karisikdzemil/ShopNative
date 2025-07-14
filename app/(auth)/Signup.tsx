@@ -3,7 +3,7 @@ import { setUser } from "@/redux/slices/userSlice";
 import Feather from "@expo/vector-icons/Feather";
 import { Link, useRouter } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { ActivityIndicator, Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch } from "react-redux";
@@ -23,25 +23,37 @@ export default function Signup() {
       return;
     }
 
-    try {
-      setLoading(true);
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+   try {
+  setLoading(true);
 
-      await setDoc(doc(db, "users", user.uid), {
-        fullName,
-        email,
-        createdAt: new Date(),
-      });
-       dispatch(setUser({
-              uid: user.uid,
-              email: user.email,
-              fullName
-            }));
-            setLoading(false);
-      router.replace("/(tabs)"); 
+  // 1. Kreiraj korisnika u auth
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+
+  // 2. Dodaj dodatne podatke u Firestore
+  const userData = {
+    fullName,
+    email,
+    createdAt: new Date(),
+  };
+
+  await setDoc(doc(db, "users", user.uid), userData);
+
+  // 3. Uzmi podatke nazad iz Firestore (da imaš sve, i eventualno ažurne)
+  const docSnap = await getDoc(doc(db, "users", user.uid));
+
+  if (docSnap.exists()) {
+    // 4. Setuj kompletnog korisnika u redux
+    dispatch(setUser({ uid: user.uid, ...docSnap.data() }));
+  } else {
+    throw new Error("User data not found in Firestore.");
+  }
+
+  setLoading(false);
+  router.replace("/(tabs)");
     } catch (error: any) {
       console.error("Signup error:", error);
+  setLoading(false);
       Alert.alert("Signup Failed", error.message);
     }
   };

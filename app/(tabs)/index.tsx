@@ -11,7 +11,7 @@ import {
   FlatList,
   ScrollView,
   Text,
-  View,
+  View
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -24,11 +24,13 @@ export default function Index() {
   } = useSelector((state: RootState) => state.products);
   const user = useSelector((state: RootState) => state.user);
   console.log(user);
+  
 
+  
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
-
+  
   const featured = products.slice(0, 4);
 
   return (
@@ -37,8 +39,11 @@ export default function Index() {
         <View className="bg-[#1C1C1E] mt-20 flex-row justify-between items-center p-5">
           <View className="flex-col gap-2">
             <Text className="text-xl text-gray-400">Good Morning,</Text>
-            <Text className="text-2xl font-bold text-white">[USERNAME]</Text>
+            <Text className="text-2xl font-bold text-white">{user.fullName}</Text>
           </View>
+           {/* <TouchableOpacity onPress={() => dispatch(clearUser())} >
+       <Text className="text-5xl text-white">Brisii</Text>
+      </TouchableOpacity> */}
           <View className="flex-row gap-5">
             <Feather
               name="search"
