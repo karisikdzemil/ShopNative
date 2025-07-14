@@ -1,77 +1,119 @@
+import { auth, db } from "@/FirebaseConfig";
 import Feather from "@expo/vector-icons/Feather";
-import { Link } from "expo-router";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Link, useRouter } from "expo-router";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { useState } from "react";
+import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+
 export default function Signup() {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const router = useRouter();
+
+  const handleSignup = async () => {
+    if (!fullName || !email || !password) {
+      Alert.alert("Validation Error", "Please fill in all fields.");
+      return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Zapisivanje korisnika u Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        fullName,
+        email,
+        createdAt: new Date(),
+      });
+
+      console.log("User created:", user.email);
+      router.replace("/(tabs)"); // promeni ako imaš drugi home screen
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      Alert.alert("Signup Failed", error.message);
+    }
+  };
+
   return (
     <View style={{ backgroundColor: "#121212", flex: 1 }}>
       <View className="pt-20 items-center gap-5">
-        <Text className="text-3xl mx-auto text-white font-bold">
-          Create Account
-        </Text>
-            <Text className=" text-gray-400">Join our community and start shopping today</Text>
+        <Text className="text-3xl mx-auto text-white font-bold">Create Account</Text>
+        <Text className="text-gray-400">Join our community and start shopping today</Text>
       </View>
 
-  <View className="w-[90%] mx-auto mt-10">
-  <Text className="text-white font-bold mb-2">Full Name</Text>
-  
-  <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center justify-center relative">
-    <Feather
-      style={{ position: "absolute", left: 10, zIndex: 10 }}
-      name="mail"
-      size={24}
-      color="gray"
-    />
-    <TextInput
-      className="bg-[#29292c] z-0 w-full pl-12 h-[60%] text-gray-400"
-      placeholder="Enter your email"
-      placeholderTextColor="gray"
-    />
-  </View>
-</View>
-     <View className="w-[90%] mx-auto mt-10">
-  <Text className="text-white font-bold mb-2">Email</Text>
-  
-  <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center justify-center relative">
-    <Feather
-      style={{ position: "absolute", left: 10, zIndex: 10 }}
-      name="mail"
-      size={24}
-      color="gray"
-    />
-    <TextInput
-      className="bg-[#29292c] z-0 w-full pl-12 h-[60%] text-gray-400"
-      placeholder="Enter your email"
-      placeholderTextColor="gray"
-    />
-  </View>
-</View>
-     <View className="w-[90%] mx-auto mt-10">
-  <Text className="text-white font-bold mb-2">Password</Text>
-  
-  <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center justify-center relative">
-    <Feather
-      style={{ position: "absolute", left: 10, zIndex: 10 }}
-      name="lock"
-      size={24}
-      color="gray"
-    />
-    <TextInput
-      className="bg-[#29292c] z-0 w-full pl-12 h-[60%] text-gray-400"
-      placeholder="Enter your password"
-      placeholderTextColor="gray"
-    />
-  </View>
-</View>
-     <View className="w-[90%] mx-auto mt-16">
+      <View className="w-[90%] mx-auto mt-10">
+        <Text className="text-white font-bold mb-2">Full Name</Text>
+        <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center relative">
+          <Feather style={{ position: "absolute", left: 10 }} name="user" size={24} color="gray" />
+          <TextInput
+            className="bg-[#29292c] w-full pl-12 text-gray-400"
+            placeholder="Enter your Full Name"
+            placeholderTextColor="gray"
+            value={fullName}
+            onChangeText={setFullName}
+          />
+        </View>
+      </View>
 
-    <TouchableOpacity className="py-5 rounded-lg text-center bg-[#FF5C00]">
-           <Text className="text-white w-full text-center text-2xl font-bold">Sign Up</Text>
-    </TouchableOpacity>
-    </View>
-     <View className="w-full flex-row gap-2 justify-end mt-10 pr-7">
-                    <Text className="text-white">Don't have an account? </Text>
-                    <Link className="text-[#FF5C00]" href="/(auth)/Login">SignUp</Link>
-                </View>
+      <View className="w-[90%] mx-auto mt-10">
+        <Text className="text-white font-bold mb-2">Email</Text>
+        <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center relative">
+          <Feather style={{ position: "absolute", left: 10 }} name="mail" size={24} color="gray" />
+          <TextInput
+            className="bg-[#29292c] w-full pl-12 text-gray-400"
+            placeholder="Enter your Email"
+            placeholderTextColor="gray"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+      </View>
+
+      <View className="w-[90%] mx-auto mt-10">
+        <Text className="text-white font-bold mb-2">Password</Text>
+        <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center relative">
+          <Feather style={{ position: "absolute", left: 10 }} name="lock" size={24} color="gray" />
+          <TextInput
+            className="bg-[#29292c] w-full pl-12 text-gray-400"
+            placeholder="Enter your Password"
+            placeholderTextColor="gray"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
+      </View>
+
+      <View className="w-[90%] mx-auto mt-16">
+        <TouchableOpacity className="py-3 rounded-lg bg-[#FF5C00]" onPress={handleSignup}>
+          <Text className="text-white text-center text-2xl font-bold">Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View className="flex-row gap-2 justify-end mt-10 pr-7">
+        <Text className="text-white">You already have an account? </Text>
+        <Link className="text-[#FF5C00]" href="/(auth)/Login">Login</Link>
+      </View>
+
+      <View className="py-12 flex-row items-center justify-center gap-3">
+        <View className="h-1 w-[150px] border-t-2 border-gray-500"></View>
+        <Text className="text-gray-400 text-xl">or</Text>
+        <View className="h-1 w-[150px] border-t-2 border-gray-500"></View>
+      </View>
+
+      <View className="w-[90%] mx-auto">
+        <TouchableOpacity className="py-3 rounded-lg border-2 border-[#FF5C00]">
+          <Text className="text-center text-2xl font-bold text-[#FF5C00]">
+            Continue with Google
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
