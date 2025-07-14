@@ -5,13 +5,14 @@ import { Link, useRouter } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
-import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch } from "react-redux";
 
 export default function Signup() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function Signup() {
     }
 
     try {
+      setLoading(true);
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
@@ -36,8 +38,7 @@ export default function Signup() {
               email: user.email,
               fullName
             }));
-
-      console.log("User created:", user.email);
+            setLoading(false);
       router.replace("/(tabs)"); 
     } catch (error: any) {
       console.error("Signup error:", error);
@@ -55,9 +56,9 @@ export default function Signup() {
       <View className="w-[90%] mx-auto mt-10">
         <Text className="text-white font-bold mb-2">Full Name</Text>
         <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center relative">
-          <Feather style={{ position: "absolute", left: 10 }} name="user" size={24} color="gray" />
+          <Feather style={{ position: "absolute", left: 10, zIndex:1 }} name="user" size={24} color="gray" />
           <TextInput
-            className="bg-[#29292c] w-full pl-12 text-gray-400"
+            className="bg-[#29292c] w-full pl-12 text-gray-400 z-0"
             placeholder="Enter your Full Name"
             placeholderTextColor="gray"
             value={fullName}
@@ -69,9 +70,9 @@ export default function Signup() {
       <View className="w-[90%] mx-auto mt-10">
         <Text className="text-white font-bold mb-2">Email</Text>
         <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center relative">
-          <Feather style={{ position: "absolute", left: 10 }} name="mail" size={24} color="gray" />
+          <Feather style={{ position: "absolute", left: 10, zIndex:1 }} name="mail" size={24} color="gray" />
           <TextInput
-            className="bg-[#29292c] w-full pl-12 text-gray-400"
+            className="bg-[#29292c] w-full pl-12 text-gray-400 z-0"
             placeholder="Enter your Email"
             placeholderTextColor="gray"
             keyboardType="email-address"
@@ -85,9 +86,9 @@ export default function Signup() {
       <View className="w-[90%] mx-auto mt-10">
         <Text className="text-white font-bold mb-2">Password</Text>
         <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center relative">
-          <Feather style={{ position: "absolute", left: 10 }} name="lock" size={24} color="gray" />
+          <Feather style={{ position: "absolute", left: 10, zIndex:1 }} name="lock" size={24} color="gray" />
           <TextInput
-            className="bg-[#29292c] w-full pl-12 text-gray-400"
+            className="bg-[#29292c] w-full pl-12 text-gray-400 z-0"
             placeholder="Enter your Password"
             placeholderTextColor="gray"
             secureTextEntry
@@ -97,11 +98,13 @@ export default function Signup() {
         </View>
       </View>
 
-      <View className="w-[90%] mx-auto mt-16">
+     {!loading ? <View className="w-[90%] mx-auto mt-16">
         <TouchableOpacity className="py-3 rounded-lg bg-[#FF5C00]" onPress={handleSignup}>
           <Text className="text-white text-center text-2xl font-bold">Sign Up</Text>
         </TouchableOpacity>
-      </View>
+      </View> :  <View className="flex-1 justify-center align-center">
+                    <ActivityIndicator size="large" color="#FF5C00" />
+                  </View>}
 
       <View className="flex-row gap-2 justify-end mt-10 pr-7">
         <Text className="text-white">You already have an account? </Text>
@@ -115,7 +118,7 @@ export default function Signup() {
       </View>
 
       <View className="w-[90%] mx-auto">
-        <TouchableOpacity className="py-3 rounded-lg border-2 border-[#FF5C00]">
+        <TouchableOpacity onPress={() => Alert.alert("We are working on that funcitonality!")} className="py-3 rounded-lg border-2 border-[#FF5C00]">
           <Text className="text-center text-2xl font-bold text-[#FF5C00]">
             Continue with Google
           </Text>

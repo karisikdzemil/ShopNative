@@ -4,12 +4,13 @@ import Feather from "@expo/vector-icons/Feather";
 import { Link, useRouter } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useDispatch } from "react-redux";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -20,6 +21,7 @@ export default function Login() {
     }
 
     try {
+      setLoading(true);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       dispatch(setUser({
@@ -27,6 +29,7 @@ export default function Login() {
         email: user.email,
         fullName: null
       }));
+      setLoading(false);
       router.replace("/(tabs)"); 
     } catch (error: any) {
       console.error("Login failed:", error);
@@ -44,9 +47,9 @@ export default function Login() {
       <View className="w-[90%] mx-auto mt-10">
         <Text className="text-white font-bold mb-2">Email</Text>
         <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center relative">
-          <Feather style={{ position: "absolute", left: 10 }} name="mail" size={24} color="gray" />
+          <Feather style={{ position: "absolute", left: 10, zIndex:1 }} name="mail" size={24} color="gray" />
           <TextInput
-            className="bg-[#29292c] w-full pl-12 text-gray-400"
+            className="bg-[#29292c] w-full z-0 pl-12 text-gray-400 "
             placeholder="Enter your email"
             placeholderTextColor="gray"
             value={email}
@@ -60,9 +63,9 @@ export default function Login() {
       <View className="w-[90%] mx-auto mt-10">
         <Text className="text-white font-bold mb-2">Password</Text>
         <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center relative">
-          <Feather style={{ position: "absolute", left: 10 }} name="lock" size={24} color="gray" />
+          <Feather style={{ position: "absolute", left: 10, zIndex:1 }} name="lock" size={24} color="gray" />
           <TextInput
-            className="bg-[#29292c] w-full pl-12 text-gray-400"
+            className="bg-[#29292c] w-full pl-12 z-0 text-gray-400"
             placeholder="Enter your password"
             placeholderTextColor="gray"
             value={password}
@@ -73,11 +76,13 @@ export default function Login() {
         <Text className="text-[#FF5C00] text-right mt-2">Forgot Password?</Text>
       </View>
 
-      <View className="w-[90%] mx-auto mt-16">
+      {!loading ? <View className="w-[90%] mx-auto mt-16">
         <TouchableOpacity className="py-5 rounded-lg bg-[#FF5C00]" onPress={handleLogin}>
           <Text className="text-white text-center text-2xl font-bold">Sign In</Text>
         </TouchableOpacity>
-      </View>
+      </View> :  <View className="flex-1 justify-center align-center">
+                    <ActivityIndicator size="large" color="#FF5C00" />
+                  </View>}
 
       <View className="flex-row gap-2 justify-end mt-10 pr-7">
         <Text className="text-white">{"Don't have an account?"}</Text>
@@ -91,7 +96,7 @@ export default function Login() {
       </View>
 
       <View className="w-[90%] mx-auto">
-        <TouchableOpacity className="py-3 rounded-lg border-2 border-[#FF5C00]">
+        <TouchableOpacity onPress={() => Alert.alert("We are working on that funcitonality!")} className="py-3 rounded-lg border-2 border-[#FF5C00]">
           <Text className="text-center text-2xl font-bold text-[#FF5C00]">
             Continue with Google
           </Text>
