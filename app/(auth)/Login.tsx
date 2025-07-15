@@ -24,18 +24,15 @@ export default function Login() {
    try {
   setLoading(true);
 
-  // 1. Prijavi korisnika
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
   const user = userCredential.user;
 
-  // 2. Povuci podatke iz Firestore
   const docSnap = await getDoc(doc(db, "users", user.uid));
 
   if (!docSnap.exists()) {
     throw new Error("User data not found in Firestore.");
   }
 
-  // 3. Setuj usera u redux
   dispatch(setUser({ uid: user.uid, ...docSnap.data() }));
 
   setLoading(false);
