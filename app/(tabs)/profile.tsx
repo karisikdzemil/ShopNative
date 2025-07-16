@@ -50,7 +50,7 @@ export default function Profile() {
         <ProfileCard title='My orders' text='View your order history' icon='package'/>
         <ProfileCard title='Wishlist' text='0 items' icon='heart'/>
         <ProfileCard title='Addresses' text='Manage delivery addresses' icon='navigation'/>
-        <ProfileCard title='Payment mMthods' text='Manage payment options' icon='credit-card'/>
+        <ProfileCard title='Payment Methods' text='Manage payment options' icon='credit-card'/>
         <ProfileCard title='Settings' text='App preferences' icon='settings'/>
       </View>
 

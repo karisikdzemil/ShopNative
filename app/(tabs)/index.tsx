@@ -70,15 +70,17 @@ export default function Index() {
               data={featured}
               keyExtractor={(item) => item.id.toString()}
               scrollEnabled={false}
-              renderItem={({ item }) => (
-                <Item
+              renderItem={({ item }) => {
+                const newOrSale = Math.random() * 10;
+               return <Item
                   imageUrl={item.image}
                   title={item.title}
                   category={item.category}
                   rating={item.rating}
                   price={item.price}
+                  newOrSale={newOrSale}
                 />
-              )}
+              }}
               numColumns={2}
               columnWrapperStyle={{
                 justifyContent: "space-between",
