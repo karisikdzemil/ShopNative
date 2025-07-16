@@ -37,7 +37,7 @@ export default function Profile() {
           <Text className="text-gray-400">Orders</Text>
         </View>
         <View className="justify-center items-center">
-          <Text className="text-3xl font-bold text-[#FF5C00]">0</Text>
+          <Text className="text-3xl font-bold text-[#FF5C00]">{user.savedItems.length}</Text>
           <Text className="text-gray-400">Favorites</Text>
         </View>
         <View className="justify-center items-center">
@@ -48,7 +48,7 @@ export default function Profile() {
 
       <View className="mt-5">
         <ProfileCard title='My orders' text='View your order history' icon='package'/>
-        <ProfileCard title='Wishlist' text='0 items' icon='heart'/>
+        <ProfileCard title='Wishlist' text={`${user.savedItems.length} items`} icon='heart'/>
         <ProfileCard title='Addresses' text='Manage delivery addresses' icon='navigation'/>
         <ProfileCard title='Payment Methods' text='Manage payment options' icon='credit-card'/>
         <ProfileCard title='Settings' text='App preferences' icon='settings'/>

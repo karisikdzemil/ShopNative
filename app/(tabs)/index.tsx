@@ -23,15 +23,13 @@ export default function Index() {
     error,
   } = useSelector((state: RootState) => state.products);
   const user = useSelector((state: RootState) => state.user);
-  console.log(user);
-  
-
   
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
   
   const featured = products.slice(0, 4);
+
 
   return (
     <View style={{ backgroundColor: "#121212", flex: 1 }}>
@@ -72,7 +70,9 @@ export default function Index() {
               scrollEnabled={false}
               renderItem={({ item }) => {
                 const newOrSale = Math.random() * 10;
+
                return <Item
+                  id={item.id}
                   imageUrl={item.image}
                   title={item.title}
                   category={item.category}

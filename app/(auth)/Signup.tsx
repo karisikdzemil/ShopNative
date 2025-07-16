@@ -33,6 +33,7 @@ export default function Signup() {
     fullName,
     email,
     createdAt: new Date(),
+    savedItems: [],
   };
 
   await setDoc(doc(db, "users", user.uid), userData);
