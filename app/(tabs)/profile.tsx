@@ -1,11 +1,21 @@
 import ProfileCard from "@/components/ProfileCard";
+import { clearUser } from "@/redux/slices/userSlice";
 import { RootState } from "@/redux/store";
 import Feather from "@expo/vector-icons/Feather";
+import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Profile() {
   const user = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+    const clearUserHandler = () => {
+        dispatch(clearUser());
+        router.replace("/(auth)/Login");
+    }
+  
   return (
     <View style={{ backgroundColor: "#121212", flex: 1 }}>
       <View className="bg-[#1C1C1E] h-[20vh] border-1 gap-5 pt-12 flex-row items-center p-5">
@@ -38,14 +48,14 @@ export default function Profile() {
 
       <View className="mt-5">
         <ProfileCard title='My orders' text='View your order history' icon='package'/>
-        <ProfileCard title='My orders' text='View your order history' icon='package'/>
-        <ProfileCard title='My orders' text='View your order history' icon='package'/>
-        <ProfileCard title='My orders' text='View your order history' icon='package'/>
-        <ProfileCard title='My orders' text='View your order history' icon='package'/>
+        <ProfileCard title='Wishlist' text='0 items' icon='heart'/>
+        <ProfileCard title='Addresses' text='Manage delivery addresses' icon='navigation'/>
+        <ProfileCard title='Payment mMthods' text='Manage payment options' icon='credit-card'/>
+        <ProfileCard title='Settings' text='App preferences' icon='settings'/>
       </View>
 
       <View className="h-[5vh] mt-10 bg-[#1C1C1E] pl-5 ">
-       <TouchableOpacity>
+       <TouchableOpacity onPress={clearUserHandler}>
          <View className="h-[5vh] flex-row items-center gap-5">
         <Feather name="log-out" size={26} color="red" />
         <Text className="text-xl font-bold text-red-500">Logout</Text>
