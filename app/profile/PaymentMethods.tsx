@@ -69,7 +69,6 @@ export default function PaymentMethods() {
         paymentMethods: arrayUnion(paymentData),
       });
 
-
       dispatch(addPaymentMethod(paymentData));
       Alert.alert("Success", "Payment method saved.");
 
@@ -85,8 +84,10 @@ export default function PaymentMethods() {
     }
   };
 
+  console.log("user ovo ono", user.paymentMethods);
+
   return (
-    <View style={{ backgroundColor: "#121212", flex: 1 }}>
+    <View style={{ backgroundColor: "#121212", flex: 1, paddingBottom: 10 }}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="py-20 bg-[#1C1C1E] relative">
           <TouchableOpacity
@@ -99,6 +100,64 @@ export default function PaymentMethods() {
             Payment Methods
           </Text>
         </View>
+
+        {user.paymentMethods && user.paymentMethods.length > 0 && (
+          <View className="rounded-2xl p-5 shadow-md mt-4">
+            <Text className="text-lg text-white font-semibold mb-3">Method Of Payment</Text>
+
+            {user.paymentMethods.map((el, index) => (
+              <View
+                key={index}
+                className="bg-[#1F1F1F] p-4 rounded-xl mb-4 border border-gray-700"
+              >
+                {el.method === "Card" && (
+                  <View className="space-y-2">
+                    <Text className="text-white text-base font-semibold">
+                      {"Owner's Name"}
+                    </Text>
+                    <Text className="text-gray-300">{user.fullName}</Text>
+
+                    <Text className="text-white text-base font-semibold mt-2">
+                      Broj kartice:
+                    </Text>
+                    <Text className="text-gray-300 tracking-widest">
+                      {el.number}
+                    </Text>
+
+                    <View className="flex-row justify-between mt-2">
+                      <View>
+                        <Text className="text-white text-base font-semibold">
+                          Istek:
+                        </Text>
+                        <Text className="text-gray-300">{el.expiry}</Text>
+                      </View>
+                      <View>
+                        <Text className="text-white text-base font-semibold">
+                          CVV:
+                        </Text>
+                        <Text className="text-gray-300">{el.cvv}</Text>
+                      </View>
+                    </View>
+                  </View>
+                )}
+
+                {el.method === "PayPal" && (
+                  <View className="space-y-2">
+                    <Text className="text-white text-base font-semibold">
+                      Način plaćanja:
+                    </Text>
+                    <Text className="text-gray-300">PayPal</Text>
+
+                    <Text className="text-white text-base font-semibold mt-2">
+                      Email:
+                    </Text>
+                    <Text className="text-gray-300">{el.email}</Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
 
         <View className="bg-[#1C1C1E] mt-10 p-5">
           <Text className="text-white text-xl font-bold text-center mb-5">
