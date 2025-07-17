@@ -47,11 +47,11 @@ export default function Profile() {
       </View>
 
       <View className="mt-5">
-        <ProfileCard title='My orders' text='View your order history' icon='package'/>
-        <ProfileCard title='Wishlist' text={`${user.savedItems.length} items`} icon='heart'/>
-        <ProfileCard title='Addresses' text='Manage delivery addresses' icon='navigation'/>
-        <ProfileCard title='Payment Methods' text='Manage payment options' icon='credit-card'/>
-        <ProfileCard title='Settings' text='App preferences' icon='settings'/>
+        <ProfileCard title='My orders' text='View your order history' icon='package' path="/profile/OrdersHistory"/>
+        <ProfileCard title='Wishlist' text={`${user.savedItems.length} items`} icon='heart' path="/profile/WishList"/>
+        <ProfileCard title='Addresses' text='Manage delivery addresses' icon='navigation' path="/profile/ManageAddresses"/>
+        <ProfileCard title='Payment Methods' text='Manage payment options' icon='credit-card' path="/profile/PaymentMethods"/>
+       <ProfileCard title='Settings' text='App preferences' icon='settings' path="/profile/Settings"/>
       </View>
 
       <View className="h-[5vh] mt-10 bg-[#1C1C1E] pl-5 ">

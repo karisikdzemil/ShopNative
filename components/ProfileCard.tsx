@@ -1,9 +1,11 @@
-import Feather from "@expo/vector-icons/Feather"
-import { Text, TouchableOpacity, View } from "react-native"
-export default function ProfileCard ( {title, text, icon}: any ) {
+import Feather from "@expo/vector-icons/Feather";
+import { useRouter } from "expo-router";
+import { Text, TouchableOpacity, View } from "react-native";
+export default function ProfileCard ( {title, text, icon, path}: any ) {
+    const route = useRouter();
 
     return (
-         <TouchableOpacity>
+         <TouchableOpacity onPress={() => route.push(path)}>
           <View className="bg-[#1C1C1E] h-[7vh] pl-5 border-b-[0.5px] border-gray-500 flex-row items-start gap-5">
             <View className="justify-center h-[7vh]">
               <Feather name={icon} size={32} color="gray" />
