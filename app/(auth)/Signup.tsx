@@ -34,6 +34,8 @@ export default function Signup() {
     email,
     createdAt: new Date(),
     savedItems: [],
+    address: {street: null, city: null, postalCode: null, country: null},
+    paymentMethods: []
   };
 
   await setDoc(doc(db, "users", user.uid), userData);
