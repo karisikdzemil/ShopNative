@@ -1,10 +1,12 @@
 // import { RootState } from '@/redux/store';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Image, Text, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 // import { useSelector } from 'react-redux';
+import { useRouter } from 'expo-router';
 import SaveItem from './SaveItem';
 
 export default function Item({imageUrl, title, category, rating, price, id}: any) {
+  const route = useRouter();
   // const newOrSale = Math.random() * 10;
 
   // let newSale = <View className="hidden"></View>;
@@ -16,7 +18,8 @@ export default function Item({imageUrl, title, category, rating, price, id}: any
 
   return (
     <View className="w-[48%] h-[35vh] bg-[#1C1C1E] rounded-md relative">
-      {/* {newSale} */}
+     <TouchableOpacity onPress={() => route.push(`/itemPage/${id}`)}>
+       {/* {newSale} */}
       <View className='absolute right-4 top-4 z-20'>
         <SaveItem itemId={id}/>
       </View>
@@ -34,6 +37,7 @@ export default function Item({imageUrl, title, category, rating, price, id}: any
              {' '} {rating.rate} {(rating.count)}</Text>
         <Text className="text-xl text-white font-bold">${price}</Text>
        </View>
+     </TouchableOpacity>
     </View>
   );
 }
