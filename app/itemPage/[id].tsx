@@ -1,8 +1,11 @@
 import { RootState } from "@/redux/store";
 import { FontAwesome } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
+
+const colors = ["black", "white", "red", "blue"];
+const size = ["7", "8", "9", "10", "11", "12"];
 
 export default function ItemPage() {
   const { id } = useLocalSearchParams();
@@ -45,7 +48,7 @@ export default function ItemPage() {
   return (
     <View style={{ backgroundColor: "#121212", flex: 1 }}>
       <ScrollView
-        className="w-full pt-14"
+        className="w-full pt-14 pb-14"
         contentContainerStyle={{ paddingBottom: 40, paddingTop: 20 }}
       >
         <Image
@@ -81,7 +84,21 @@ export default function ItemPage() {
 
           <Text className="text-gray-400 mt-5">{product.description}</Text>
         </View>
-
+        
+       <View className="flex-row gap-3 items-center justify-center mt-5">
+         {colors.map((el, i) => (
+            <TouchableOpacity key={i} className="w-24 rounded-2xl py-3 bg-[#1C1C1E]">
+                <Text className="text-gray-400 text-center">{el}</Text>
+            </TouchableOpacity>
+        ))}
+       </View>
+        <View className="flex-row gap-3 items-center justify-center mt-5">
+         {size.map((el, i) => (
+            <TouchableOpacity key={i} className="w-14 rounded-2xl py-3 bg-[#1C1C1E]">
+                <Text className="text-gray-400 text-center">{el}</Text>
+            </TouchableOpacity>
+        ))}
+       </View>
         
       </ScrollView>
     </View>
