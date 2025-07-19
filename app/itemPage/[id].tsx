@@ -1,13 +1,16 @@
 import { RootState } from "@/redux/store";
 import { FontAwesome } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
+import { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 
 const colors = ["black", "white", "red", "blue"];
-const size = ["7", "8", "9", "10", "11", "12"];
+const sizes = ["7", "8", "9", "10", "11", "12"];
 
 export default function ItemPage() {
+    const [color, setColor] = useState<string | null>(null);
+    const [size, setSize] = useState<string | null>(null)
   const { id } = useLocalSearchParams();
   const { items, loading } = useSelector((state: RootState) => state.products);
 
@@ -85,17 +88,19 @@ export default function ItemPage() {
           <Text className="text-gray-400 mt-5">{product.description}</Text>
         </View>
         
-       <View className="flex-row gap-3 items-center justify-center mt-5">
+        <Text className="ml-6 m-2 text-2xl text-white font-bold">Colors</Text>
+       <View className="flex-row gap-3 mb-3 items-center justify-center mt-5">
          {colors.map((el, i) => (
-            <TouchableOpacity key={i} className="w-24 rounded-2xl py-3 bg-[#1C1C1E]">
-                <Text className="text-gray-400 text-center">{el}</Text>
+            <TouchableOpacity onPress={() => setColor(el)} key={i} className={`w-24 rounded-2xl py-3 ${el === color ? "bg-[#FF5C00]" : "bg-[#1C1C1E]"}`}>
+                <Text className={` text-center ${el === color ? "text-white" : "text-gray-400"}`}>{el}</Text>
             </TouchableOpacity>
         ))}
        </View>
-        <View className="flex-row gap-3 items-center justify-center mt-5">
-         {size.map((el, i) => (
-            <TouchableOpacity key={i} className="w-14 rounded-2xl py-3 bg-[#1C1C1E]">
-                <Text className="text-gray-400 text-center">{el}</Text>
+        <Text className="ml-6 m-2 text-2xl text-white font-bold">Size</Text>
+        <View className="flex-row mb-3 gap-3 items-center justify-center mt-5">
+         {sizes.map((el, i) => (
+            <TouchableOpacity onPress={() => setSize(el)} key={i} className={`w-14 rounded-2xl py-3 ${el === size ? "bg-[#FF5C00]" : "bg-[#1C1C1E]"}`}>
+                <Text className={` text-center ${el === size ? "text-white" : "text-gray-400"}`}>{el}</Text>
             </TouchableOpacity>
         ))}
        </View>
