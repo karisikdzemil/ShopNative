@@ -38,6 +38,7 @@ export default function CartItem ( {id} ) {
       <TouchableOpacity className="absolute right-3 top-3">
         <Feather name="trash-2" size={24} color="red" />
       </TouchableOpacity>
+      
         </View>
     )
 }
