@@ -1,5 +1,6 @@
 import { RootState } from "@/redux/store";
 import { FontAwesome } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -87,7 +88,8 @@ export default function ItemPage() {
 
           <Text className="text-gray-400 mt-5">{product.description}</Text>
         </View>
-        
+
+       {(product.category === "men's clothing" || product.category === "women's clothing") && <View>
         <Text className="ml-6 m-2 text-2xl text-white font-bold">Colors</Text>
        <View className="flex-row gap-3 mb-3 items-center justify-center mt-5">
          {colors.map((el, i) => (
@@ -104,8 +106,16 @@ export default function ItemPage() {
             </TouchableOpacity>
         ))}
        </View>
-        
+       </View>}
       </ScrollView>
+      <View className="bg-[#1C1C1E] items-center gap-5 justify-center flex-row h-28">
+        <View className="w-14 h-14 rounded-md bg-gray-600 items-center justify-center">
+            <Feather name="shopping-cart" size={30} color="black" />
+        </View>
+          <TouchableOpacity className="w-[70%] h-14 py-3 rounded-lg bg-[#FF5C00]">
+          <Text className="text-white text-center text-2xl font-bold">Add to Cart</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
