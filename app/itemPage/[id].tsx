@@ -80,7 +80,7 @@ export default function ItemPage() {
     }
 
     try {
-      setAddingToCart(true); // ✅ start loading
+      setAddingToCart(true); 
 
       const cartItemRef = doc(
         db,
@@ -99,7 +99,6 @@ export default function ItemPage() {
 
         dispatch(
           addItem({
-            // ✅ ažuriraj Redux
             productId: product.id,
             quantity: 1,
           })
@@ -133,7 +132,7 @@ export default function ItemPage() {
       console.error("Error adding to cart:", err);
       Alert.alert("Error", "Could not add item to cart");
     } finally {
-      setAddingToCart(false); // ✅ stop loading
+      setAddingToCart(false);
     }
   };
 

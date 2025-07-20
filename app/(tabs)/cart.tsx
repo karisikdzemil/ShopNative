@@ -1,3 +1,4 @@
+import CartItem from "@/components/CartItem";
 import { Ionicons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "expo-router";
@@ -9,6 +10,7 @@ export default function Cart() {
   // const user = useSelector((state: RootState) => state.user);
   const cartItems = useSelector((state) => state.cart);
 
+  console.log(cartItems)
   return (
     <View style={{ backgroundColor: "#121212", flex: 1 }}>
       
@@ -41,7 +43,12 @@ export default function Cart() {
           </View>
 
       ) : (
-          <Text>E sad si najebooo</Text>
+             <View>
+               {cartItems.cartItems.map((el) => (
+                  <CartItem key={el.productId} id={el.productId}/>
+               ))}
+               <Text>Proba</Text>
+             </View>
         )}
         </ScrollView>
     </View>
