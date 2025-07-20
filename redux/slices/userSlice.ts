@@ -18,7 +18,7 @@ interface UserState {
   uid: string | null;
   email: string | null;
   fullName: string | null;
-  savedItems: any[]; // možeš zameniti any tipom kad znaš strukturu itema
+  savedItems: any[];
   address: Address | null;
   paymentMethods: PaymentMethod[];
 }
