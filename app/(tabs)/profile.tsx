@@ -1,4 +1,5 @@
 import ProfileCard from "@/components/ProfileCard";
+import { deleteCart } from "@/redux/slices/cartSlice";
 import { clearUser } from "@/redux/slices/userSlice";
 import { RootState } from "@/redux/store";
 import Feather from "@expo/vector-icons/Feather";
@@ -13,6 +14,7 @@ export default function Profile() {
 
     const clearUserHandler = () => {
         dispatch(clearUser());
+        dispatch(deleteCart());
         router.replace("/(auth)/Login");
     }
   

@@ -1,24 +1,26 @@
 import { db } from "@/FirebaseConfig";
-import { addItem } from "@/redux/slices/cartSlice";
+import { setCart } from "@/redux/slices/cartSlice";
 import { RootState } from "@/redux/store";
 import { FontAwesome } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { useLocalSearchParams } from "expo-router";
 import {
-    doc,
-    getDoc,
-    serverTimestamp,
-    setDoc,
-    updateDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  serverTimestamp,
+  setDoc,
+  updateDoc
 } from "firebase/firestore";
 import { useState } from "react";
 import {
-    Alert,
-    Image,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -68,73 +70,72 @@ export default function ItemPage() {
     );
   }
 
-  const addToCartHandler = async () => {
-    const userId = user.uid;
-    const isClothing =
-      product.category === "men's clothing" ||
-      product.category === "women's clothing";
+const addToCartHandler = async () => {
+  const userId = user.uid;
+  const isClothing =
+    product.category === "men's clothing" ||
+    product.category === "women's clothing";
 
-    if (isClothing && (color === null || size === null)) {
-      Alert.alert("You must enter size and color");
-      return;
-    }
+  if (isClothing && (color === null || size === null)) {
+    Alert.alert("You must enter size and color");
+    return;
+  }
 
-    try {
-      setAddingToCart(true); 
+  try {
+    setAddingToCart(true);
 
-      const cartItemRef = doc(
-        db,
-        "users",
-        userId,
-        "cartItems",
-        String(product.id)
-      );
-      const cartItemSnap = await getDoc(cartItemRef);
+    const cartItemRef = doc(
+      db,
+      "users",
+      userId,
+      "cartItems",
+      String(product.id)
+    );
+    const cartItemSnap = await getDoc(cartItemRef);
 
-      if (cartItemSnap.exists()) {
-        await updateDoc(cartItemRef, {
-          quantity: cartItemSnap.data().quantity + 1,
-          updatedAt: serverTimestamp(),
-        });
+    if (cartItemSnap.exists()) {
+      await updateDoc(cartItemRef, {
+        quantity: cartItemSnap.data().quantity + 1,
+        updatedAt: serverTimestamp(),
+      });
+    } else {
+      const newItem: any = {
+        productId: product.id,
+        quantity: 1,
+        addedAt: serverTimestamp(),
+      };
 
-        dispatch(
-          addItem({
-            productId: product.id,
-            quantity: 1,
-          })
-        );
-      } else {
-        const newItem: any = {
-          productId: product.id,
-          quantity: 1,
-          addedAt: serverTimestamp(),
-        };
-
-        if (isClothing) {
-          newItem.color = color;
-          newItem.size = size;
-        }
-
-        await setDoc(cartItemRef, newItem);
-
-        dispatch(
-          addToCart({
-            productId: product.id,
-            quantity: 1,
-            color: newItem.color,
-            size: newItem.size,
-          })
-        );
+      if (isClothing) {
+        newItem.color = color;
+        newItem.size = size;
       }
 
-      Alert.alert("Item added to cart");
-    } catch (err) {
-      console.error("Error adding to cart:", err);
-      Alert.alert("Error", "Could not add item to cart");
-    } finally {
-      setAddingToCart(false);
+      await setDoc(cartItemRef, newItem);
     }
-  };
+
+    // *** Sada povuci sve iteme iz Firestore-a ***
+    const cartItemsColRef = collection(db, "users", userId, "cartItems");
+    const cartItemsSnap = await getDocs(cartItemsColRef);
+
+    const updatedCartItems = cartItemsSnap.docs.map((doc) => ({
+      productId: doc.data().productId,
+      quantity: doc.data().quantity,
+      color: doc.data().color,
+      size: doc.data().size,
+    }));
+
+    // Postavi u Redux stanje
+    dispatch(setCart(updatedCartItems));
+
+    Alert.alert("Item added to cart");
+  } catch (err) {
+    console.error("Error adding to cart:", err);
+    Alert.alert("Error", "Could not add item to cart");
+  } finally {
+    setAddingToCart(false);
+  }
+};
+
 
   return (
     <View style={{ backgroundColor: "#121212", flex: 1 }}>
