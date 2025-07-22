@@ -113,7 +113,6 @@ const addToCartHandler = async () => {
       await setDoc(cartItemRef, newItem);
     }
 
-    // *** Sada povuci sve iteme iz Firestore-a ***
     const cartItemsColRef = collection(db, "users", userId, "cartItems");
     const cartItemsSnap = await getDocs(cartItemsColRef);
 
@@ -124,7 +123,6 @@ const addToCartHandler = async () => {
       size: doc.data().size,
     }));
 
-    // Postavi u Redux stanje
     dispatch(setCart(updatedCartItems));
 
     Alert.alert("Item added to cart");
