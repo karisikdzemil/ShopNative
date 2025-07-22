@@ -16,7 +16,7 @@ import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 
 export default function CartItem({ id }: { id: number }) {
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.user);
   const { items: products } = useSelector((state: RootState) => state.products);
   const cartItems = useSelector((state: RootState) => state.cart.cartItems);
 
@@ -36,23 +36,36 @@ export default function CartItem({ id }: { id: number }) {
   };
 
   const itemHandler = async (operation: "+" | "-") => {
-    const itemRef = doc(db, "users", user.uid, "cartItems", String(targetItem.id));
-    // OVDE SAM STAO NECE NESTOOO
-    if (operation === "+") {
-      await updateDoc(itemRef, {
-        quantity: cartTargetItem.quantity + 1,
-      });
-    } else if (operation === "-") {
-      if (cartTargetItem.quantity > 1) {
-        await updateDoc(itemRef, {
-          quantity: cartTargetItem.quantity - 1,
-        });
-      } else {
-        await deleteDoc(itemRef);
-      }
-    }
+    if (!targetItem || !cartTargetItem) return;
 
-    await refreshCart();
+    try {
+      const itemRef = doc(
+        db,
+        "users",
+        user.uid,
+        "cartItems",
+        String(cartTargetItem.productId)
+      );
+
+      if (operation === "+") {
+        await updateDoc(itemRef, {
+          quantity: cartTargetItem.quantity + 1,
+        });
+      } else if (operation === "-") {
+        if (cartTargetItem.quantity > 1) {
+          await updateDoc(itemRef, {
+            quantity: cartTargetItem.quantity - 1,
+          });
+        } else {
+          await deleteDoc(itemRef);
+        }
+      }
+
+      await refreshCart();
+    } catch (error) {
+      console.error("Error updating cart item:", error);
+      Alert.alert("Error", "Failed to update cart item.");
+    }
   };
 
   const deleteItem = async () => {
@@ -62,9 +75,20 @@ export default function CartItem({ id }: { id: number }) {
         text: "Remove",
         style: "destructive",
         onPress: async () => {
-          const itemRef = doc(db, "users", user.uid, "cartItems", String(id));
-          await deleteDoc(itemRef);
-          await refreshCart();
+          try {
+            const itemRef = doc(
+              db,
+              "users",
+              user.uid,
+              "cartItems",
+              String(id)
+            );
+            await deleteDoc(itemRef);
+            await refreshCart();
+          } catch (error) {
+            console.error("Error deleting item:", error);
+            Alert.alert("Error", "Failed to remove item from cart.");
+          }
         },
       },
     ]);
@@ -111,6 +135,7 @@ export default function CartItem({ id }: { id: number }) {
           <Text className="text-white text-2xl">{cartTargetItem.quantity}</Text>
 
           <TouchableOpacity onPress={() => itemHandler("+")}>
+          {/* <TouchableOpacity onPress={proba}> */}
             <Text className="p-3 text-xl rounded-md bg-slate-800 text-gray-400">
               +
             </Text>
