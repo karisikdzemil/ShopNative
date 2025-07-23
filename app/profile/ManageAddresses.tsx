@@ -83,7 +83,7 @@ export default function ManageAddresses() {
           <Text className="text-lg font-semibold mb-2">Your address</Text>
           <Text className="text-base text-gray-700">{user.address.street}</Text>
           <Text className="text-base text-gray-700">
-            {user.address.postalCode}, {user.address.city}
+            {user.address.city}, {user.address.postalCode} 
           </Text>
           <Text className="text-base text-gray-700">
             {user.address.country}

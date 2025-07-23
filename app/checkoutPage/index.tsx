@@ -9,6 +9,7 @@ export default function Checkout() {
   const navigation = useNavigation();
    const cart = useSelector((state: RootState) => state.cart);
   const { items: products } = useSelector((state: RootState) => state.products);
+  const user = useSelector((state: RootState) => state.user);
 
   const cartItemsWithProduct = cart.cartItems.map((cartItem) => {
     const product = products.find((p) => p.id === cartItem.productId);
@@ -24,6 +25,9 @@ export default function Checkout() {
   const tax = subtotal * 0.1;
   const total = subtotal + tax;
 
+  function proba () {
+    console.log(user)
+  }
 
   return (
     <View style={{ backgroundColor: "#121212", flex: 1 }}>
@@ -47,31 +51,31 @@ export default function Checkout() {
               Shipping Address
             </Text>
           </View>
-          <View className="bg-[#242426] p-5 rounded-xl gap-1">
-            <Text className="text-white font-bold text-lg">John Doe</Text>
-            <Text className="text-gray-400">Ulica neka</Text>
-            <Text className="text-gray-400">Grad neki</Text>
-            <Text className="text-gray-400">Drzava Neka</Text>
-          </View>
-          <Link href="/profile/ManageAddresses" className="text-[#FF5C00] ml-1">
+          {user.address ? <View className="bg-[#242426] p-5 rounded-xl gap-1">
+            <Text className="text-white font-bold text-lg">{user.fullName}</Text>
+            <Text className="text-gray-400">{user.address.street}</Text>
+            <Text className="text-gray-400">{user.address.postalCode}, {user.address.city}</Text>
+            <Text className="text-gray-400">{user.address.country}</Text>
+          </View> : <Link href="/profile/ManageAddresses">Set Address</Link>}
+          {user.address && <Link href="/profile/ManageAddresses" className="text-[#FF5C00] ml-1">
             Change
-          </Link>
+          </Link>}
         </View>
         <View className="p-5 gap-3 mt-5 bg-[#1C1C1E]">
           <View className="flex-row items-center justify-start gap-3">
             <Feather name="credit-card" size={24} color="gray" />
             <Text className="text-white text-xl font-bold">Payment Method</Text>
           </View>
-          <TouchableOpacity className="bg-[#242426] p-5 rounded-xl gap-1">
+          {user.paymentMethods && <TouchableOpacity className="bg-[#242426] p-5 rounded-xl gap-1">
             <Text className="text-white font-bold text-lg">
               Credit/Debit Card
             </Text>
             <Text className="text-gray-400">**** **** **** 1234</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="bg-[#242426] p-5 rounded-xl gap-1">
+          </TouchableOpacity>}
+         {user.paymentMethods && <TouchableOpacity onPress={proba} className="bg-[#242426] p-5 rounded-xl gap-1">
             <Text className="text-white font-bold text-lg">PayPal</Text>
             <Text className="text-gray-400">paypal@gmail.com</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
         <View className="p-5 gap-3 bg-[#1C1C1E] mt-5">
           <View className="flex-row items-center justify-start gap-3">
