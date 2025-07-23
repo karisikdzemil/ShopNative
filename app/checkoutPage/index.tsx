@@ -2,14 +2,20 @@ import { RootState } from "@/redux/store";
 import { Ionicons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { Link, useNavigation } from "expo-router";
+import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 
 export default function Checkout() {
+  const [card, setCard] = useState<number | null>(null);
   const navigation = useNavigation();
-   const cart = useSelector((state: RootState) => state.cart);
+  const cart = useSelector((state: RootState) => state.cart);
   const { items: products } = useSelector((state: RootState) => state.products);
   const user = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+      user.paymentMethods.length > 0 && setCard(0);
+  }, [])
 
   const cartItemsWithProduct = cart.cartItems.map((cartItem) => {
     const product = products.find((p) => p.id === cartItem.productId);
@@ -24,10 +30,6 @@ export default function Checkout() {
 
   const tax = subtotal * 0.1;
   const total = subtotal + tax;
-
-  function proba () {
-    console.log(user)
-  }
 
   return (
     <View style={{ backgroundColor: "#121212", flex: 1 }}>
@@ -51,22 +53,35 @@ export default function Checkout() {
               Shipping Address
             </Text>
           </View>
-          {user.address ? <View className="bg-[#242426] p-5 rounded-xl gap-1">
-            <Text className="text-white font-bold text-lg">{user.fullName}</Text>
-            <Text className="text-gray-400">{user.address.street}</Text>
-            <Text className="text-gray-400">{user.address.postalCode}, {user.address.city}</Text>
-            <Text className="text-gray-400">{user.address.country}</Text>
-          </View> : <Link href="/profile/ManageAddresses">Set Address</Link>}
-          {user.address && <Link href="/profile/ManageAddresses" className="text-[#FF5C00] ml-1">
-            Change
-          </Link>}
+          {user.address ? (
+            <View className="bg-[#242426] p-5 rounded-xl gap-1">
+              <Text className="text-white font-bold text-lg">
+                {user.fullName}
+              </Text>
+              <Text className="text-gray-400">{user.address.street}</Text>
+              <Text className="text-gray-400">
+                {user.address.postalCode}, {user.address.city}
+              </Text>
+              <Text className="text-gray-400">{user.address.country}</Text>
+            </View>
+          ) : (
+            <Link href="/profile/ManageAddresses">Set Address</Link>
+          )}
+          {user.address && (
+            <Link
+              href="/profile/ManageAddresses"
+              className="text-[#FF5C00] ml-1"
+            >
+              Change
+            </Link>
+          )}
         </View>
         <View className="p-5 gap-3 mt-5 bg-[#1C1C1E]">
           <View className="flex-row items-center justify-start gap-3">
             <Feather name="credit-card" size={24} color="gray" />
             <Text className="text-white text-xl font-bold">Payment Method</Text>
           </View>
-          {user.paymentMethods && <TouchableOpacity className="bg-[#242426] p-5 rounded-xl gap-1">
+          {/* {user.paymentMethods && <TouchableOpacity className="bg-[#242426] p-5 rounded-xl gap-1">
             <Text className="text-white font-bold text-lg">
               Credit/Debit Card
             </Text>
@@ -75,7 +90,27 @@ export default function Checkout() {
          {user.paymentMethods && <TouchableOpacity onPress={proba} className="bg-[#242426] p-5 rounded-xl gap-1">
             <Text className="text-white font-bold text-lg">PayPal</Text>
             <Text className="text-gray-400">paypal@gmail.com</Text>
-          </TouchableOpacity>}
+          </TouchableOpacity>} */}
+          {user.paymentMethods.length > 0 &&
+            user.paymentMethods.map((el, i) => (
+              <TouchableOpacity
+                key={i}
+                onPress={() => setCard(i)}
+                className={`${card === i && "border-[1px] border-green-500"} bg-[#242426] flex-row items-center justify-between p-5 rounded-xl gap-1`}
+              >
+                <View>
+                  <Text className="text-white font-bold text-lg">
+                    {el.method}
+                  </Text>
+                  {el.method === "Card" ? (
+                    <Text className="text-gray-400">{el.number}</Text>
+                  ) : (
+                    <Text className="text-gray-400">{el.email}</Text>
+                  )}
+                </View>
+                {card === i && <Feather name="check" size={24} color="green" />}
+              </TouchableOpacity>
+            ))}
         </View>
         <View className="p-5 gap-3 bg-[#1C1C1E] mt-5">
           <View className="flex-row items-center justify-start gap-3">
@@ -94,9 +129,7 @@ export default function Checkout() {
         </View>
         <View className="p-5 gap-3 bg-[#1C1C1E] my-5">
           <View className="flex-row items-center justify-start gap-3">
-            <Text className="text-white text-xl font-bold">
-              Order Summary
-            </Text>
+            <Text className="text-white text-xl font-bold">Order Summary</Text>
           </View>
           <View className="bg-[#242426] rounded-xl">
             <View className="flex-row justify-between px-5 pt-5 p-1 items-center">
@@ -122,8 +155,10 @@ export default function Checkout() {
           </View>
         </View>
       </ScrollView>
-       <View className=" bg-[#1C1C1E] p-5 items-center gap-5">
-        <Text className="text-white text-2xl font-bold">Total: ${total.toFixed(2)}</Text>
+      <View className=" bg-[#1C1C1E] p-5 items-center gap-5">
+        <Text className="text-white text-2xl font-bold">
+          Total: ${total.toFixed(2)}
+        </Text>
         <TouchableOpacity className="py-4 w-[90%] mb-5 rounded-lg bg-[#FF5C00]">
           <Text className="text-white text-center text-2xl font-bold">
             Proceed to checkout
