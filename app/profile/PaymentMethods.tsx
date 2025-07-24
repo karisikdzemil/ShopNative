@@ -27,6 +27,7 @@ export default function PaymentMethods() {
   const [cardName, setCardName] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCVV, setCardCVV] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [paypalEmail, setPaypalEmail] = useState("");
 
@@ -64,6 +65,7 @@ export default function PaymentMethods() {
     }
 
     try {
+      setLoading(true)
       const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, {
         paymentMethods: arrayUnion(paymentData),
@@ -78,9 +80,11 @@ export default function PaymentMethods() {
       setCardCVV("");
       setPaypalEmail("");
       setSelectedMethod(null);
+      setLoading(false)
     } catch (error) {
       console.error("Error saving payment method:", error);
       Alert.alert("Error", "Failed to save payment method.");
+      setLoading(false)
     }
   };
 
@@ -242,6 +246,7 @@ export default function PaymentMethods() {
             <TouchableOpacity
               onPress={savePaymentHandler}
               className="mt-10 bg-[#FF5C00] p-4 rounded-xl"
+              disabled={loading}
             >
               <Text className="text-white text-center font-bold">
                 Save Payment Method

@@ -19,6 +19,7 @@ export default function ManageAddresses() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [address, setAddress] = useState({
     street: "",
@@ -42,6 +43,7 @@ export default function ManageAddresses() {
     }
 
     try {
+      setLoading(true)
       const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, {
         addresses: arrayUnion(address),
@@ -52,13 +54,13 @@ export default function ManageAddresses() {
       Alert.alert("Success", "Your address has been saved successfully!");
 
       setAddress({ street: "", city: "", postalCode: "", country: "" });
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error saving address:", error);
       Alert.alert("Error", "Failed to save address.");
     }
   };
-
-  console.log(user.address)
 
   return (
     <ScrollView
@@ -125,9 +127,10 @@ export default function ManageAddresses() {
 
       <TouchableOpacity
         onPress={handleSave}
+        disabled={loading}
         className="mt-10 bg-[#FF5C00] w-[90%] p-4 mx-auto rounded-xl items-center"
       >
-        <Text className="text-white font-bold text-lg">{user.address ? 'Change Address' : 'Save Address'}</Text>
+        <Text className="text-white font-bold text-lg">Save Address</Text>
       </TouchableOpacity>
     </ScrollView>
   );
