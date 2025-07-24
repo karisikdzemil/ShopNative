@@ -1,14 +1,32 @@
+import { db } from "@/FirebaseConfig";
+import { setCart } from "@/redux/slices/cartSlice";
 import { RootState } from "@/redux/store";
 import { Ionicons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { Link, useNavigation } from "expo-router";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  serverTimestamp,
+  writeBatch,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useSelector } from "react-redux";
+import {
+  Alert,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Checkout() {
   const [card, setCard] = useState<number | null>(null);
+  const [placingOrder, setPlacingOrder] = useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
   const cart = useSelector((state: RootState) => state.cart);
   const { items: products } = useSelector((state: RootState) => state.products);
   const user = useSelector((state: RootState) => state.user);
@@ -24,12 +42,73 @@ export default function Checkout() {
       ...product,
     };
   });
+
   const subtotal = cartItemsWithProduct.reduce((acc, item) => {
     return acc + item.price * item.quantity;
   }, 0);
 
   const tax = subtotal * 0.1;
   const total = subtotal + tax;
+
+  const placeOrderHandler = async () => {
+    if (Array.isArray(user.address)) {
+      Alert.alert("You need to add a shipping address");
+      return;
+    }
+    if (user.paymentMethods.length === 0 || card === null) {
+      Alert.alert("You need to select a payment method");
+      return;
+    }
+
+    try {
+      setPlacingOrder(true);
+      const userId = user.uid;
+
+      const cartItemsColRef = collection(db, "users", userId, "cartItems");
+      const cartItemsSnap = await getDocs(cartItemsColRef);
+
+      const items = cartItemsSnap.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      if (items.length === 0) {
+        Alert.alert("Cart is empty");
+        return;
+      }
+
+      const selectedPayment = user.paymentMethods[card];
+
+      const orderData = {
+        items,
+        total,
+        tax,
+        subtotal,
+        createdAt: serverTimestamp(),
+        status: "pending",
+        shippingAddress: user.address,
+        paymentMethod: selectedPayment,
+      };
+
+      const ordersColRef = collection(db, "users", userId, "orders");
+      await addDoc(ordersColRef, orderData);
+
+      const batch = writeBatch(db);
+      cartItemsSnap.docs.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      await batch.commit();
+
+      dispatch(setCart([]));
+      Alert.alert("Order placed successfully!");
+      navigation.goBack();
+    } catch (err) {
+      console.error("Error placing order:", err);
+      Alert.alert("Error", "Could not place order");
+    } finally {
+      setPlacingOrder(false);
+    }
+  };
 
   return (
     <View style={{ backgroundColor: "#121212", flex: 1 }}>
@@ -41,9 +120,7 @@ export default function Checkout() {
           >
             <Ionicons name="chevron-back" size={28} color="white" />
           </TouchableOpacity>
-          <Text className="text-3xl mx-auto text-white font-bold">
-            Checkout
-          </Text>
+          <Text className="text-3xl mx-auto text-white font-bold">Checkout</Text>
         </View>
 
         <View className="p-5 gap-3 bg-[#1C1C1E] mt-5">
@@ -53,22 +130,18 @@ export default function Checkout() {
               Shipping Address
             </Text>
           </View>
-          {user.address.length > 0 ? (
+          {user.address && !Array.isArray(user.address) ? (
             <View className="bg-[#242426] p-5 rounded-xl gap-1">
-              <Text className="text-white font-bold text-lg">
-                {user.fullName}
-              </Text>
-              <Text className="text-gray-400">{user.address[0].street}</Text>
+              <Text className="text-white font-bold text-lg">{user.fullName}</Text>
+              <Text className="text-gray-400">{user.address.street}</Text>
               <Text className="text-gray-400">
-                {user.address[0].postalCode}, {user.address[0].city}
+                {user.address.postalCode}, {user.address.city}
               </Text>
-              <Text className="text-gray-400">{user.address[0].country}</Text>
+              <Text className="text-gray-400">{user.address.country}</Text>
             </View>
           ) : (
             <View className="bg-[#242426] p-5 rounded-xl gap-3 items-start">
-              <Text className="text-white text-lg font-bold">
-                No Address Found
-              </Text>
+              <Text className="text-white text-lg font-bold">No Address Found</Text>
               <Text className="text-gray-400">
                 You need to add a shipping address before placing an order.
               </Text>
@@ -79,15 +152,13 @@ export default function Checkout() {
               </Link>
             </View>
           )}
-          {user.address.length > 0 && (
-            <Link
-              href="/profile/ManageAddresses"
-              className="text-[#FF5C00] ml-1"
-            >
+          {user.address && !Array.isArray(user.address) && (
+            <Link href="/profile/ManageAddresses" className="text-[#FF5C00] ml-1">
               <Text> Change</Text>
             </Link>
           )}
         </View>
+
         <View className="p-5 gap-3 mt-5 bg-[#1C1C1E]">
           <View className="flex-row items-center justify-start gap-3">
             <Feather name="credit-card" size={24} color="gray" />
@@ -98,12 +169,12 @@ export default function Checkout() {
               <TouchableOpacity
                 key={i}
                 onPress={() => setCard(i)}
-                className={`${card === i && "border-[1px] border-green-500"} bg-[#242426] flex-row items-center justify-between p-5 rounded-xl gap-1`}
+                className={`${
+                  card === i && "border-[1px] border-green-500"
+                } bg-[#242426] flex-row items-center justify-between p-5 rounded-xl gap-1`}
               >
                 <View>
-                  <Text className="text-white font-bold text-lg">
-                    {el.method}
-                  </Text>
+                  <Text className="text-white font-bold text-lg">{el.method}</Text>
                   {el.method === "Card" ? (
                     <Text className="text-gray-400">{el.number}</Text>
                   ) : (
@@ -115,9 +186,7 @@ export default function Checkout() {
             ))
           ) : (
             <View className="bg-[#242426] p-5 rounded-xl gap-3 items-start">
-              <Text className="text-white text-lg font-bold">
-                No Payment Method
-              </Text>
+              <Text className="text-white text-lg font-bold">No Payment Method</Text>
               <Text className="text-gray-400">
                 You need to add at least one payment method to continue.
               </Text>
@@ -129,21 +198,19 @@ export default function Checkout() {
             </View>
           )}
         </View>
+
         <View className="p-5 gap-3 bg-[#1C1C1E] mt-5">
           <View className="flex-row items-center justify-start gap-3">
             <Feather name="truck" size={24} color="gray" />
-            <Text className="text-white text-xl font-bold">
-              Delivery Options
-            </Text>
+            <Text className="text-white text-xl font-bold">Delivery Options</Text>
           </View>
           <View className="bg-[#242426] p-5 rounded-xl gap-1">
-            <Text className="text-white font-bold text-lg">
-              Standard Delivery
-            </Text>
+            <Text className="text-white font-bold text-lg">Standard Delivery</Text>
             <Text className="text-gray-400">5-7 business day</Text>
             <Text className="text-white font-bold text-lg">Free</Text>
           </View>
         </View>
+
         <View className="p-5 gap-3 bg-[#1C1C1E] my-5">
           <View className="flex-row items-center justify-start gap-3">
             <Text className="text-white text-xl font-bold">Order Summary</Text>
@@ -151,9 +218,7 @@ export default function Checkout() {
           <View className="bg-[#242426] rounded-xl">
             <View className="flex-row justify-between px-5 pt-5 p-1 items-center">
               <Text className="text-gray-400">Subtotal</Text>
-              <Text className="text-white font-bold">
-                ${subtotal.toFixed(2)}
-              </Text>
+              <Text className="text-white font-bold">${subtotal.toFixed(2)}</Text>
             </View>
             <View className="flex-row justify-between px-5 py-1 items-center">
               <Text className="text-gray-400">Tax (10%)</Text>
@@ -172,13 +237,17 @@ export default function Checkout() {
           </View>
         </View>
       </ScrollView>
-      <View className=" bg-[#1C1C1E] p-5 items-center gap-5">
+      <View className="bg-[#1C1C1E] p-5 items-center gap-5">
         <Text className="text-white text-2xl font-bold">
           Total: ${total.toFixed(2)}
         </Text>
-        <TouchableOpacity className="py-4 w-[90%] mb-5 rounded-lg bg-[#FF5C00]">
+        <TouchableOpacity
+          onPress={placeOrderHandler}
+          disabled={placingOrder}
+          className="py-4 w-[90%] mb-5 rounded-lg bg-[#FF5C00]"
+        >
           <Text className="text-white text-center text-2xl font-bold">
-            Proceed to checkout
+            {placingOrder ? "Placing..." : "Place Order"}
           </Text>
         </TouchableOpacity>
       </View>

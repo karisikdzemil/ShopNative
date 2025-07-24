@@ -58,6 +58,8 @@ export default function ManageAddresses() {
     }
   };
 
+  console.log(user.address)
+
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
@@ -76,15 +78,15 @@ export default function ManageAddresses() {
         </Text>
       </View>
 
-      {user.address.length > 0 && (
+      {user.address && !Array.isArray(user.address) && (
         <View className="bg-gray-400 mx-5 rounded-2xl p-5 shadow-md mt-5">
           <Text className="text-lg font-semibold mb-2">Your address</Text>
-          <Text className="text-base text-gray-700">{user.address[0].street}</Text>
+          <Text className="text-base text-gray-700">{user.address.street}</Text>
           <Text className="text-base text-gray-700">
-            {user.address[0].city}, {user.address[0].postalCode} 
+            {user.address.city}, {user.address.postalCode} 
           </Text>
           <Text className="text-base text-gray-700">
-            {user.address[0].country}
+            {user.address.country}
           </Text>
         </View>
       )}
