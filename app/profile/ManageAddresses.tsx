@@ -27,7 +27,6 @@ export default function ManageAddresses() {
     country: "",
   });
 
-  console.log(user);
 
   const handleSave = async () => {
     const { street, city, postalCode, country } = address;
@@ -52,7 +51,6 @@ export default function ManageAddresses() {
 
       Alert.alert("Success", "Your address has been saved successfully!");
 
-      // Reset
       setAddress({ street: "", city: "", postalCode: "", country: "" });
     } catch (error) {
       console.error("Error saving address:", error);
@@ -78,15 +76,15 @@ export default function ManageAddresses() {
         </Text>
       </View>
 
-      {user.address && (
+      {user.address.length > 0 && (
         <View className="bg-gray-400 mx-5 rounded-2xl p-5 shadow-md mt-5">
           <Text className="text-lg font-semibold mb-2">Your address</Text>
-          <Text className="text-base text-gray-700">{user.address.street}</Text>
+          <Text className="text-base text-gray-700">{user.address[0].street}</Text>
           <Text className="text-base text-gray-700">
-            {user.address.city}, {user.address.postalCode} 
+            {user.address[0].city}, {user.address[0].postalCode} 
           </Text>
           <Text className="text-base text-gray-700">
-            {user.address.country}
+            {user.address[0].country}
           </Text>
         </View>
       )}

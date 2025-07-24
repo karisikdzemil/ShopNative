@@ -3,7 +3,7 @@ import CheckoutInfo from "@/components/CheckoutInfo";
 import { RootState } from "@/redux/store";
 import { Ionicons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
-import { useNavigation } from "expo-router";
+import { Link, useNavigation } from "expo-router";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -53,11 +53,11 @@ export default function Cart() {
             <Text className=" text-gray-400">
               Add some products to your cart to get started
             </Text>
-            <TouchableOpacity className="w-52 rounded-md mt-10 py-4 bg-[#FF5C00]">
+            <Link href="/(tabs)/categories" className="w-52 rounded-md mt-10 py-4 bg-[#FF5C00]">
               <Text className=" text-center text-xl text-white font-bold">
                 Start Shopping
               </Text>
-            </TouchableOpacity>
+            </Link>
           </View>
         ) : (
           <View>

@@ -34,7 +34,7 @@ export default function Signup() {
     email,
     createdAt: new Date(),
     savedItems: [],
-    address: {street: null, city: null, postalCode: null, country: null},
+    address: [],
     paymentMethods: []
   };
 

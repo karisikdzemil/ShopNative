@@ -14,8 +14,8 @@ export default function Checkout() {
   const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
-      user.paymentMethods.length > 0 && setCard(0);
-  }, [])
+    user.paymentMethods.length > 0 && setCard(0);
+  }, []);
 
   const cartItemsWithProduct = cart.cartItems.map((cartItem) => {
     const product = products.find((p) => p.id === cartItem.productId);
@@ -53,26 +53,38 @@ export default function Checkout() {
               Shipping Address
             </Text>
           </View>
-          {user.address ? (
+          {user.address.length > 0 ? (
             <View className="bg-[#242426] p-5 rounded-xl gap-1">
               <Text className="text-white font-bold text-lg">
                 {user.fullName}
               </Text>
-              <Text className="text-gray-400">{user.address.street}</Text>
+              <Text className="text-gray-400">{user.address[0].street}</Text>
               <Text className="text-gray-400">
-                {user.address.postalCode}, {user.address.city}
+                {user.address[0].postalCode}, {user.address[0].city}
               </Text>
-              <Text className="text-gray-400">{user.address.country}</Text>
+              <Text className="text-gray-400">{user.address[0].country}</Text>
             </View>
           ) : (
-            <Link href="/profile/ManageAddresses">Set Address</Link>
+            <View className="bg-[#242426] p-5 rounded-xl gap-3 items-start">
+              <Text className="text-white text-lg font-bold">
+                No Address Found
+              </Text>
+              <Text className="text-gray-400">
+                You need to add a shipping address before placing an order.
+              </Text>
+              <Link href="/profile/ManageAddresses">
+                <Text className="text-[#FF5C00] font-bold text-base mt-2">
+                  + Add Shipping Address
+                </Text>
+              </Link>
+            </View>
           )}
-          {user.address && (
+          {user.address.length > 0 && (
             <Link
               href="/profile/ManageAddresses"
               className="text-[#FF5C00] ml-1"
             >
-              Change
+              <Text> Change</Text>
             </Link>
           )}
         </View>
@@ -81,17 +93,7 @@ export default function Checkout() {
             <Feather name="credit-card" size={24} color="gray" />
             <Text className="text-white text-xl font-bold">Payment Method</Text>
           </View>
-          {/* {user.paymentMethods && <TouchableOpacity className="bg-[#242426] p-5 rounded-xl gap-1">
-            <Text className="text-white font-bold text-lg">
-              Credit/Debit Card
-            </Text>
-            <Text className="text-gray-400">**** **** **** 1234</Text>
-          </TouchableOpacity>}
-         {user.paymentMethods && <TouchableOpacity onPress={proba} className="bg-[#242426] p-5 rounded-xl gap-1">
-            <Text className="text-white font-bold text-lg">PayPal</Text>
-            <Text className="text-gray-400">paypal@gmail.com</Text>
-          </TouchableOpacity>} */}
-          {user.paymentMethods.length > 0 &&
+          {user.paymentMethods.length > 0 ? (
             user.paymentMethods.map((el, i) => (
               <TouchableOpacity
                 key={i}
@@ -110,7 +112,22 @@ export default function Checkout() {
                 </View>
                 {card === i && <Feather name="check" size={24} color="green" />}
               </TouchableOpacity>
-            ))}
+            ))
+          ) : (
+            <View className="bg-[#242426] p-5 rounded-xl gap-3 items-start">
+              <Text className="text-white text-lg font-bold">
+                No Payment Method
+              </Text>
+              <Text className="text-gray-400">
+                You need to add at least one payment method to continue.
+              </Text>
+              <Link href="/profile/PaymentMethods">
+                <Text className="text-[#FF5C00] font-bold text-base mt-2">
+                  + Add Payment Method
+                </Text>
+              </Link>
+            </View>
+          )}
         </View>
         <View className="p-5 gap-3 bg-[#1C1C1E] mt-5">
           <View className="flex-row items-center justify-start gap-3">
