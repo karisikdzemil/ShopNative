@@ -5,7 +5,14 @@ import { Link, useRouter } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useState } from "react";
-import { ActivityIndicator, Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useDispatch } from "react-redux";
 
 export default function Signup() {
@@ -23,36 +30,40 @@ export default function Signup() {
       return;
     }
 
-   try {
-  setLoading(true);
+    try {
+      setLoading(true);
 
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  const user = userCredential.user;
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
 
-  const userData = {
-    fullName,
-    email,
-    createdAt: new Date(),
-    savedItems: [],
-    address: [],
-    paymentMethods: []
-  };
+      const userData = {
+        fullName,
+        email,
+        createdAt: new Date(),
+        savedItems: [],
+        address: [],
+        paymentMethods: [],
+      };
 
-  await setDoc(doc(db, "users", user.uid), userData);
+      await setDoc(doc(db, "users", user.uid), userData);
 
-  const docSnap = await getDoc(doc(db, "users", user.uid));
+      const docSnap = await getDoc(doc(db, "users", user.uid));
 
-  if (docSnap.exists()) {
-    dispatch(setUser({ uid: user.uid, ...docSnap.data() }));
-  } else {
-    throw new Error("User data not found in Firestore.");
-  }
+      if (docSnap.exists()) {
+        dispatch(setUser({ uid: user.uid, ...docSnap.data() }));
+      } else {
+        throw new Error("User data not found in Firestore.");
+      }
 
-  setLoading(false);
-  router.replace("/(tabs)");
+      setLoading(false);
+      router.replace("/(tabs)");
     } catch (error: any) {
       console.error("Signup error:", error);
-  setLoading(false);
+      setLoading(false);
       Alert.alert("Signup Failed", error.message);
     }
   };
@@ -60,14 +71,23 @@ export default function Signup() {
   return (
     <View style={{ backgroundColor: "#121212", flex: 1 }}>
       <View className="pt-20 items-center gap-5">
-        <Text className="text-3xl mx-auto text-white font-bold">Create Account</Text>
-        <Text className="text-gray-400">Join our community and start shopping today</Text>
+        <Text className="text-3xl mx-auto text-white font-bold">
+          Create Account
+        </Text>
+        <Text className="text-gray-400">
+          Join our community and start shopping today
+        </Text>
       </View>
 
       <View className="w-[90%] mx-auto mt-10">
         <Text className="text-white font-bold mb-2">Full Name</Text>
         <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center relative">
-          <Feather style={{ position: "absolute", left: 10, zIndex:1 }} name="user" size={24} color="gray" />
+          <Feather
+            style={{ position: "absolute", left: 10, zIndex: 1 }}
+            name="user"
+            size={24}
+            color="gray"
+          />
           <TextInput
             className="bg-[#29292c] w-full pl-12 text-gray-400 z-0"
             placeholder="Enter your Full Name"
@@ -81,7 +101,12 @@ export default function Signup() {
       <View className="w-[90%] mx-auto mt-10">
         <Text className="text-white font-bold mb-2">Email</Text>
         <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center relative">
-          <Feather style={{ position: "absolute", left: 10, zIndex:1 }} name="mail" size={24} color="gray" />
+          <Feather
+            style={{ position: "absolute", left: 10, zIndex: 1 }}
+            name="mail"
+            size={24}
+            color="gray"
+          />
           <TextInput
             className="bg-[#29292c] w-full pl-12 text-gray-400 z-0"
             placeholder="Enter your Email"
@@ -97,7 +122,12 @@ export default function Signup() {
       <View className="w-[90%] mx-auto mt-10">
         <Text className="text-white font-bold mb-2">Password</Text>
         <View className="h-12 bg-[#29292c] rounded-lg flex-row items-center relative">
-          <Feather style={{ position: "absolute", left: 10, zIndex:1 }} name="lock" size={24} color="gray" />
+          <Feather
+            style={{ position: "absolute", left: 10, zIndex: 1 }}
+            name="lock"
+            size={24}
+            color="gray"
+          />
           <TextInput
             className="bg-[#29292c] w-full pl-12 text-gray-400 z-0"
             placeholder="Enter your Password"
@@ -109,17 +139,26 @@ export default function Signup() {
         </View>
       </View>
 
-     {!loading ? <View className="w-[90%] mx-auto mt-16">
-        <TouchableOpacity className="py-3 rounded-lg bg-[#FF5C00]" onPress={handleSignup}>
-          <Text className="text-white text-center text-2xl font-bold">Sign Up</Text>
-        </TouchableOpacity>
-      </View> :  <View className="flex-1 justify-center align-center">
-                    <ActivityIndicator size="large" color="#FF5C00" />
-                  </View>}
+      {!loading ? (
+        <View className="w-[90%] mx-auto mt-16">
+          <TouchableOpacity
+            className="py-3 rounded-lg bg-[#FF5C00]"
+            onPress={handleSignup}
+          >
+            <Text className="text-white text-center text-2xl font-bold">
+              Sign Up
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <ActivityIndicator size="large" className="p-10" color="#FF5C00" />
+      )}
 
       <View className="flex-row gap-2 justify-end mt-10 pr-7">
         <Text className="text-white">You already have an account? </Text>
-        <Link className="text-[#FF5C00]" href="/(auth)/Login">Login</Link>
+        <Link className="text-[#FF5C00]" href="/(auth)/Login">
+          Login
+        </Link>
       </View>
 
       <View className="py-12 flex-row items-center justify-center gap-3">
@@ -129,7 +168,10 @@ export default function Signup() {
       </View>
 
       <View className="w-[90%] mx-auto">
-        <TouchableOpacity onPress={() => Alert.alert("We are working on that funcitonality!")} className="py-3 rounded-lg border-2 border-[#FF5C00]">
+        <TouchableOpacity
+          onPress={() => Alert.alert("We are working on that funcitonality!")}
+          className="py-3 rounded-lg border-2 border-[#FF5C00]"
+        >
           <Text className="text-center text-2xl font-bold text-[#FF5C00]">
             Continue with Google
           </Text>

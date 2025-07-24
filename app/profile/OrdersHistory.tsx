@@ -60,17 +60,14 @@ export default function OrdersHistory() {
 
         <View className="px-5 pb-10">
           {loading ? (
-            <ActivityIndicator color="white" size="large" />
+            <View className="flex-1 justify-center align-center mt-4">
+              <ActivityIndicator size="large" color="#FF5C00" />
+            </View>
           ) : orders.length === 0 ? (
-            <Text className="text-white text-center mt-5">
-              No orders yet.
-            </Text>
+            <Text className="text-white text-center mt-5">No orders yet.</Text>
           ) : (
             orders.map((order) => (
-              <View
-                key={order.id}
-                className="bg-[#1F1F1F] rounded-xl p-4 mb-4"
-              >
+              <View key={order.id} className="bg-[#1F1F1F] rounded-xl p-4 mb-4">
                 <Text className="text-white font-bold text-lg">
                   Total: ${order.total.toFixed(2)}
                 </Text>

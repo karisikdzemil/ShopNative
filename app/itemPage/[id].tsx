@@ -168,7 +168,7 @@ const addToCartHandler = async () => {
               ${product.price}
             </Text>
             <Text className="text-2xl text-gray-400 font-bold mt-5 line-through">
-              ${product.price + 20}
+              ${(product.price + 20).toFixed(2)}
             </Text>
           </View>
 

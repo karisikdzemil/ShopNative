@@ -1,5 +1,8 @@
+import { deleteCart } from "@/redux/slices/cartSlice";
+import { clearUser } from "@/redux/slices/userSlice";
+import { RootState } from "@/redux/store";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -9,9 +12,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Settings() {
+  const user = useSelector((state: RootState) => state.user)
   const navigation = useNavigation();
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   const fakeUser = {
     name: "Džemil Karisik",
@@ -21,6 +28,12 @@ export default function Settings() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const toggleNotifications = () =>
     setNotificationsEnabled((prev) => !prev);
+
+  const clearUserHandler = () => {
+          dispatch(clearUser());
+          dispatch(deleteCart());
+          router.replace("/(auth)/Login");
+      }
 
   return (
     <View style={{ backgroundColor: "#121212", flex: 1 }}>
@@ -39,9 +52,9 @@ export default function Settings() {
 
         <View className="px-5 mt-5">
           <Text className="text-white text-lg font-semibold mb-1">
-            {fakeUser.name}
+            {user.fullName}
           </Text>
-          <Text className="text-gray-400 mb-5">{fakeUser.email}</Text>
+          <Text className="text-gray-400 mb-5">{user.email}</Text>
         </View>
 
         <View className="px-5 gap-5">
@@ -49,13 +62,13 @@ export default function Settings() {
           <SettingItem
             label="Change Password"
             icon="lock-closed"
-            onPress={() => navigation.navigate("ChangePassword")}
+            onPress={() => Alert.alert("Change Password coming soon!")}
           />
 
           <SettingItem
             label="Manage Addresses"
             icon="location"
-            onPress={() => navigation.navigate("/profile/ManageAddresses")}
+            onPress={() => router.replace("/profile/ManageAddresses")}
           />
 
           <SettingSwitch
@@ -75,7 +88,7 @@ export default function Settings() {
             label="Logout"
             icon="exit"
             danger
-            onPress={() => Alert.alert("Logged out successfully")}
+            onPress={clearUserHandler}
           />
         </View>
       </ScrollView>
