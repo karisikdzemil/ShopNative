@@ -37,6 +37,19 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ae05856a-7640-4a51-b57a-0619df0505f2"
+      }
+    },
+    "owner": "dzemilk",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ae05856a-7640-4a51-b57a-0619df0505f2"
     }
   }
 }
