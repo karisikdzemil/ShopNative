@@ -20,8 +20,8 @@ export default function RootLayout() {
         tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: "#1C1C1E",
-          paddingTop: "20",
-          paddingBottom: "5",
+          paddingTop: 20,
+          paddingBottom: 5,
         },
       }}
     >

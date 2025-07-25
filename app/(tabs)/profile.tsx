@@ -20,7 +20,7 @@ export default function Profile() {
 
   const clearUserHandler = () => {
     dispatch(clearUser());
-    dispatch(deleteCart());
+    dispatch(deleteCart([]));
     router.replace("/(auth)/Login");
   };
 

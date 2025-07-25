@@ -10,22 +10,6 @@ import { useSelector } from "react-redux";
 export default function Cart() {
   const navigation = useNavigation();
   const cart = useSelector((state: RootState) => state.cart);
-  const { items: products } = useSelector((state: RootState) => state.products);
-
-  const cartItemsWithProduct = cart.cartItems.map((cartItem) => {
-    const product = products.find((p) => p.id === cartItem.productId);
-    return {
-      ...cartItem,
-      ...product,
-    };
-  });
-
-  const subtotal = cartItemsWithProduct.reduce((acc, item) => {
-    return acc + item.price * item.quantity;
-  }, 0);
-
-  const tax = subtotal * 0.1; 
-  const total = subtotal + tax;
 
   const isCartEmpty = cart.cartItems.length === 0;
 
