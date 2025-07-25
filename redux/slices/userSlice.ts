@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface Address {
+export interface Address {
   street: string;
   city: string;
   zipCode: string;
   country: string;
 }
 
-interface PaymentMethod {
+export interface PaymentMethod {
   cardNumber: string;
   cardHolder: string;
   expiryDate: string;

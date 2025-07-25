@@ -23,8 +23,6 @@ export default function Profile() {
     dispatch(deleteCart());
     router.replace("/(auth)/Login");
   };
-  console.log(cart)
-
 
   useEffect(() => {
     const fetchOrders = async () => {

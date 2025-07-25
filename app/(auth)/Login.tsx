@@ -1,11 +1,12 @@
 import { auth, db } from "@/FirebaseConfig";
 import { setCart } from "@/redux/slices/cartSlice";
-import { setUser } from "@/redux/slices/userSlice";
+import { Address, PaymentMethod, setUser } from "@/redux/slices/userSlice";
 import Feather from "@expo/vector-icons/Feather";
 import { Link, useRouter } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { useState } from "react";
+
 import {
   ActivityIndicator,
   Alert,
@@ -45,7 +46,18 @@ export default function Login() {
         throw new Error("User data not found in Firestore.");
       }
 
-      dispatch(setUser({ uid: user.uid, ...docSnap.data() }));
+      dispatch(
+        setUser({
+          uid: user.uid,
+          ...(docSnap.data() as {
+            email: string;
+            fullName: string | null;
+            savedItems: any[];
+            address: Address | null;
+            paymentMethods: PaymentMethod[];
+          }),
+        })
+      );
 
       const cartItemsColRef = collection(db, "users", user.uid, "cartItems");
       const cartItemsSnap = await getDocs(cartItemsColRef);

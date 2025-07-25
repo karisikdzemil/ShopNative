@@ -1,5 +1,5 @@
 import { auth, db } from "@/FirebaseConfig";
-import { setUser } from "@/redux/slices/userSlice";
+import { Address, PaymentMethod, setUser } from "@/redux/slices/userSlice";
 import Feather from "@expo/vector-icons/Feather";
 import { Link, useRouter } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -54,7 +54,13 @@ export default function Signup() {
       const docSnap = await getDoc(doc(db, "users", user.uid));
 
       if (docSnap.exists()) {
-        dispatch(setUser({ uid: user.uid, ...docSnap.data() }));
+        dispatch(setUser({ uid: user.uid, ...docSnap.data() as {
+                    email: string;
+                    fullName: string | null;
+                    savedItems: any[];
+                    address: Address | null;
+                    paymentMethods: PaymentMethod[];
+                  }}));
       } else {
         throw new Error("User data not found in Firestore.");
       }
