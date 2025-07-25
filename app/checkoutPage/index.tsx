@@ -37,6 +37,7 @@ export default function Checkout() {
 
   const cartItemsWithProduct = cart.cartItems.map((cartItem) => {
     const product = products.find((p) => p.id === cartItem.productId);
+
     return {
       ...cartItem,
       ...product,

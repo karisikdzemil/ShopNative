@@ -1,5 +1,5 @@
 import { db } from "@/FirebaseConfig";
-import { addAddress } from "@/redux/slices/userSlice";
+import { addAddress, Address } from "@/redux/slices/userSlice";
 import { RootState } from "@/redux/store";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -21,7 +21,7 @@ export default function ManageAddresses() {
   const user = useSelector((state: RootState) => state.user);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [address, setAddress] = useState({
+  const [address, setAddress] = useState<Address>({
     street: "",
     city: "",
     postalCode: "",

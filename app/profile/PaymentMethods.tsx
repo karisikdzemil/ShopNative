@@ -16,6 +16,19 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
+type PaymentMethod =
+  | {
+      method: "Card";
+      number: string;
+      name: string;
+      expiry: string;
+      cvv: string;
+    }
+  | {
+      method: "PayPal";
+      email: string;
+    };
+
 export default function PaymentMethods() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -37,7 +50,7 @@ export default function PaymentMethods() {
       return;
     }
 
-    let paymentData = null;
+    let paymentData: PaymentMethod | null = null;
 
     if (selectedMethod === "card") {
       if (!cardNumber || !cardName || !cardExpiry || !cardCVV) {
@@ -64,8 +77,10 @@ export default function PaymentMethods() {
       };
     }
 
+    if (!paymentData) return;
+
     try {
-      setLoading(true)
+      setLoading(true);
       const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, {
         paymentMethods: arrayUnion(paymentData),
@@ -80,15 +95,13 @@ export default function PaymentMethods() {
       setCardCVV("");
       setPaypalEmail("");
       setSelectedMethod(null);
-      setLoading(false)
     } catch (error) {
       console.error("Error saving payment method:", error);
       Alert.alert("Error", "Failed to save payment method.");
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
-
-  console.log("user ovo ono", user.paymentMethods);
 
   return (
     <View style={{ backgroundColor: "#121212", flex: 1, paddingBottom: 10 }}>
@@ -107,9 +120,11 @@ export default function PaymentMethods() {
 
         {user.paymentMethods && user.paymentMethods.length > 0 && (
           <View className="rounded-2xl p-5 shadow-md mt-4">
-            <Text className="text-lg text-white font-semibold mb-3">Method Of Payment</Text>
+            <Text className="text-lg text-white font-semibold mb-3">
+              Method Of Payment
+            </Text>
 
-            {user.paymentMethods.map((el, index) => (
+            {user.paymentMethods.map((el: any, index: number) => (
               <View
                 key={index}
                 className="bg-[#1F1F1F] p-4 rounded-xl mb-4 border border-gray-700"
@@ -117,7 +132,7 @@ export default function PaymentMethods() {
                 {el.method === "Card" && (
                   <View className="space-y-2">
                     <Text className="text-white text-base font-semibold">
-                      {"Owner's Name"}
+                      {"Owner's"} Name
                     </Text>
                     <Text className="text-gray-300">{user.fullName}</Text>
 

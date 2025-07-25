@@ -14,26 +14,35 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
+interface SettingItemProps {
+  label: string;
+  icon: string;
+  danger?: boolean;
+  onPress: () => void;
+}
+
+interface SettingSwitchProps {
+  label: string;
+  icon: string;
+  value: boolean;
+  onValueChange: (val: boolean) => void;
+}
+
 export default function Settings() {
-  const user = useSelector((state: RootState) => state.user)
+  const user = useSelector((state: RootState) => state.user);
   const navigation = useNavigation();
   const router = useRouter();
   const dispatch = useDispatch();
-
-  const fakeUser = {
-    name: "Džemil Karisik",
-    email: "dzemil@example.com",
-  };
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const toggleNotifications = () =>
     setNotificationsEnabled((prev) => !prev);
 
   const clearUserHandler = () => {
-          dispatch(clearUser());
-          dispatch(deleteCart());
-          router.replace("/(auth)/Login");
-      }
+    dispatch(clearUser());
+    dispatch(deleteCart([]));
+    router.replace("/(auth)/Login");
+  };
 
   return (
     <View style={{ backgroundColor: "#121212", flex: 1 }}>
@@ -58,7 +67,6 @@ export default function Settings() {
         </View>
 
         <View className="px-5 gap-5">
-
           <SettingItem
             label="Change Password"
             icon="lock-closed"
@@ -96,7 +104,12 @@ export default function Settings() {
   );
 }
 
-function SettingItem({ label, icon, onPress, danger = false }) {
+const SettingItem = ({
+  label,
+  icon,
+  onPress,
+  danger = false,
+}: SettingItemProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -106,7 +119,7 @@ function SettingItem({ label, icon, onPress, danger = false }) {
     >
       <View className="flex-row items-center gap-3">
         <Ionicons
-          name={icon}
+          name={icon as any}
           size={22}
           color={danger ? "#ef4444" : "#ffffff"}
         />
@@ -125,13 +138,18 @@ function SettingItem({ label, icon, onPress, danger = false }) {
       />
     </TouchableOpacity>
   );
-}
+};
 
-function SettingSwitch({ label, icon, value, onValueChange }) {
+const SettingSwitch = ({
+  label,
+  icon,
+  value,
+  onValueChange,
+}: SettingSwitchProps) => {
   return (
     <View className="flex-row items-center justify-between bg-[#1C1C1E] rounded-xl px-5 py-4">
       <View className="flex-row items-center gap-3">
-        <Ionicons name={icon} size={22} color="white" />
+        <Ionicons name={icon as any} size={22} color="white" />
         <Text className="text-base text-white font-medium">{label}</Text>
       </View>
       <Switch
@@ -142,4 +160,4 @@ function SettingSwitch({ label, icon, value, onValueChange }) {
       />
     </View>
   );
-}
+};

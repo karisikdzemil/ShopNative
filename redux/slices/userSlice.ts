@@ -3,16 +3,20 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export interface Address {
   street: string;
   city: string;
-  zipCode: string;
+  postalCode: string;
   country: string;
+
 }
 
 export interface PaymentMethod {
-  cardNumber: string;
-  cardHolder: string;
-  expiryDate: string;
-  cvv: string;
+  method: "Card" | "PayPal";
+  cardNumber?: string;
+  cardHolder?: string;
+  expiryDate?: string;
+  cvv?: string;
+  email?: string; 
 }
+
 
 interface UserState {
   uid: string | null;

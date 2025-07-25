@@ -1,20 +1,10 @@
-// import { RootState } from '@/redux/store';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Image, Text, TouchableOpacity, View } from "react-native";
-// import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import SaveItem from './SaveItem';
 
 export default function Item({imageUrl, title, category, rating, price, id}: any) {
   const route = useRouter();
-  // const newOrSale = Math.random() * 10;
-
-  // let newSale = <View className="hidden"></View>;
-  // if(newOrSale > 6){
-  //     newSale = <View className='w-12 absolute p-1 drop-shadow-xl shadow-black left-5 top-5 rounded-[200px] z-20 bg-green-500'><Text className='text-white text-center font-bold'>New</Text></View>
-  // }else if(newOrSale < 3){
-  //     newSale = <View className='w-12 absolute p-1 drop-shadow-xl shadow-black left-5 top-5 rounded-[200px] z-20 bg-orange-500'><Text className='text-white text-center font-bold'>Sale</Text></View>
-  // }
 
   return (
     <View className="w-[48%] h-[35vh] bg-[#1C1C1E] rounded-md relative">
