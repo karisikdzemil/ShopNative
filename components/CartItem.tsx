@@ -4,11 +4,11 @@ import { RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
-    collection,
-    deleteDoc,
-    doc,
-    getDocs,
-    updateDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  updateDoc,
 } from "firebase/firestore";
 
 import Feather from "@expo/vector-icons/Feather";
@@ -135,7 +135,6 @@ export default function CartItem({ id }: { id: number }) {
           <Text className="text-white text-2xl">{cartTargetItem.quantity}</Text>
 
           <TouchableOpacity onPress={() => itemHandler("+")}>
-          {/* <TouchableOpacity onPress={proba}> */}
             <Text className="p-3 text-xl rounded-md bg-slate-800 text-gray-400">
               +
             </Text>

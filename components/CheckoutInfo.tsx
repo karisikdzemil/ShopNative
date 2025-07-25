@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 
 export default function CheckoutInfo() {
   const cart = useSelector((state: RootState) => state.cart);
-  const { items: products } = useSelector((state: RootState) => state.products);
+  const products = useSelector((state: RootState) => state.products.items);
 
   const cartItemsWithProduct = cart.cartItems.map((cartItem) => {
     const product = products.find((p) => p.id === cartItem.productId);
@@ -14,8 +14,10 @@ export default function CheckoutInfo() {
       ...product,
     };
   });
+
   const subtotal = cartItemsWithProduct.reduce((acc, item) => {
-    return acc + item.price * item.quantity;
+    const itemTotal = item?.price ? item.price * item.quantity : 0;
+    return acc + itemTotal;
   }, 0);
 
   const tax = subtotal * 0.1;

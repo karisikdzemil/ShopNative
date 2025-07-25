@@ -1,26 +1,22 @@
 import CategoryCard from "@/components/CategoryCard";
 import { useEffect, useRef, useState } from "react";
 import {
-    Dimensions,
-    FlatList,
-    TouchableOpacity,
-    View
+  Dimensions,
+  FlatList,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
-import electronics from "../assets/categories/electronics.jpeg";
-import Jewerly from "../assets/categories/Jewerly.jpg";
-import mensClothing from "../assets/categories/mensClothing.jpg";
-import womansClothing from "../assets/categories/womansClothing.jpg";
 import TitleSee from "./TitleSee";
 
 const { width } = Dimensions.get("window");
 
-export default function AutoScrollSlider () {
+export default function AutoScrollSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    useEffect(() => {
+  useEffect(() => {
     startAutoScroll();
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -39,7 +35,7 @@ export default function AutoScrollSlider () {
   const handleDotPress = (index: number) => {
     flatListRef.current?.scrollToIndex({ index, animated: true });
     setCurrentIndex(index);
-    startAutoScroll(); 
+    startAutoScroll();
   };
 
   const handleScrollEnd = (e: any) => {
@@ -47,63 +43,67 @@ export default function AutoScrollSlider () {
     setCurrentIndex(index);
   };
 
-    return(
-         <View>
-                <TitleSee title="Categories" />
-                <FlatList
-                  ref={flatListRef}
-                  data={categoryArr}
-                  horizontal
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  onMomentumScrollEnd={handleScrollEnd}
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                    <View style={{ width }}>
-                      <CategoryCard
-                        imageUrl={item.imageUrl}
-                        title={item.title}
-                        items={item.items}
-                      />
-                    </View>
-                  )}
-                />
-        
-                <View className="flex-row justify-center mt-5 gap-3">
-                  {categoryArr.map((_, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => handleDotPress(index)}
-                      className={currentIndex === index ? "w-8 h-2 rounded-lg bg-[#FF5C00]" : "w-2 h-2 rounded-[50%] bg-[#888]"}
-                    />
-                  ))}
-                </View>
-              </View>
-    )
+  return (
+    <View>
+      <TitleSee title="Categories" />
+      <FlatList
+        ref={flatListRef}
+        data={categoryArr}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={handleScrollEnd}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={{ width }}>
+            <CategoryCard
+              imageUrl={item.imageUrl}
+              title={item.title}
+              items={item.items}
+            />
+          </View>
+        )}
+      />
+
+      <View className="flex-row justify-center mt-5 gap-3">
+        {categoryArr.map((_, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => handleDotPress(index)}
+            className={
+              currentIndex === index
+                ? "w-8 h-2 rounded-lg bg-[#FF5C00]"
+                : "w-2 h-2 rounded-[50%] bg-[#888]"
+            }
+          />
+        ))}
+      </View>
+    </View>
+  );
 }
 
 const categoryArr = [
   {
     id: "1a",
-    imageUrl: mensClothing,
+    imageUrl: require("../assets/categories/mensClothing.jpg"),
     title: "Men's Clothing",
     items: 14,
   },
   {
     id: "2a",
-    imageUrl: Jewerly,
+    imageUrl: require("../assets/categories/Jewerly.jpg"),
     title: "Jewerly",
     items: 10,
   },
   {
     id: "3a",
-    imageUrl: womansClothing,
+    imageUrl: require("../assets/categories/womansClothing.jpg"),
     title: "Woman's Clothing",
     items: 24,
   },
   {
     id: "4a",
-    imageUrl: electronics,
+    imageUrl: require("../assets/categories/electronics.jpeg"),
     title: "Electronics",
     items: 4,
   },
